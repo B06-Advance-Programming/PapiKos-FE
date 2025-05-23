@@ -1,0 +1,49 @@
+.wishlist-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.wishlist-button:hover {
+  border-color: #ff5a5f;
+  background-color: #fff0f1;
+}
+
+.wishlist-button.wishlisted {
+  border-color: #ff5a5f;
+  background-color: #fff0f1;
+  color: #ff5a5f;
+}
+
+.heart-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.loading-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #ff5a5f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
