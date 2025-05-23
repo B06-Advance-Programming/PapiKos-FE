@@ -11,7 +11,9 @@ export const createCancellableRequest = () => {
   };
 };
 
-// Retry failed requests with exponential backoff
+// Helper untuk sleep
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export const retryRequest = async (requestFn, maxRetries = 3, initialDelay = 500) => {
   let retries = 0;
   let delay = initialDelay;
@@ -21,21 +23,16 @@ export const retryRequest = async (requestFn, maxRetries = 3, initialDelay = 500
       return await requestFn();
     } catch (error) {
       if (error.name === 'AbortError') {
-        // Don't retry if the request was cancelled
         throw error;
       }
-      
       retries++;
-      if (retries >= maxRetries) {
-        throw error;
-      }
-      
-      // Wait with exponential backoff
-      await new Promise(resolve => setTimeout(resolve, delay));
-      delay *= 2; // Exponential backoff
+      if (retries >= maxRetries) throw error;
+      await sleep(delay);
+      delay *= 2;
     }
   }
 };
+
 
 // Generate request IDs for tracking and debugging
 export const generateRequestId = () => {

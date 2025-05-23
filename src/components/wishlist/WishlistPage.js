@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getWishlist, removeFromWishlist, getWishlistItemDetails } from '../../api/wishlistApi';
+import { getWishlist, removeFromWishlist} from '../../api/wishlistApi';
 import { createCancellableRequest } from '../../api/apiUtils';
 import WishlistItem from './WishlistItem';
 import './WishlistPage.css';
@@ -154,21 +154,20 @@ const WishlistPage = () => {
   // Load wishlist data when component mounts
   useEffect(() => {
     fetchWishlist();
-    
-    // Clean up when component unmounts
+
+    // ⬇ snapshot ref ke variabel lokal
+    const cancelSnapshot = cancelFunctions.current;
+
     return () => {
       isMounted.current = false;
-      
-      // Cancel any pending requests
-      Object.values(cancelFunctions.current).forEach(cancel => {
-        if (typeof cancel === 'function') {
-          cancel();
-        }
+
+      // Gunakan snapshot yang tidak berubah
+      Object.values(cancelSnapshot).forEach(cancel => {
+        if (typeof cancel === 'function') cancel();
       });
     };
   }, [fetchWishlist]);
-  
-  // Handle refresh button click
+
   const handleRefresh = () => {
     fetchWishlist(true);
   };
