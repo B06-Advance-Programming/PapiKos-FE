@@ -27,11 +27,6 @@ const NavBar = () => {
               Login
             </Link>
           </li>
-          <li className="nav-item">
-            <Link to="/auth/register" className={`nav-link ${location.pathname === '/auth/register' ? 'active' : ''}`}>
-              Register
-            </Link>
-          </li>
         </ul>
       </div>
     </nav>
