@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext'; 
 import './Login.css';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,42 +19,17 @@ const Login = () => {
     setError(null);
 
     try {
-      // 1. POST ke /auth/login
-      const loginRes = await fetch('https://staging-inthekost-b6afc6b23ff0.herokuapp.com/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+      const user = await login(form.email, form.password);
 
-      if (!loginRes.ok) {
-        const msg = await loginRes.text();
-        throw new Error(msg || 'Login failed');
-      }
-
-      const { token, expiresIn } = await loginRes.json();
-      localStorage.setItem('jwtToken', token);
-      localStorage.setItem('tokenExpire', Date.now() + expiresIn);
-
-      // 2. GET /users/me dengan token
-      const userRes = await fetch('https://staging-inthekost-b6afc6b23ff0.herokuapp.com/users/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!userRes.ok) {
-        throw new Error('Failed to fetch user info');
-      }
-
-      const user = await userRes.json();
-
-      // 3. Ambil role dan redirect sesuai role
+      // user.roles: array of { id, name }
       const roleNames = user.roles.map(r => r.name);
 
       if (roleNames.includes('PEMILIK')) {
         navigate('/pemilik/dashboard');
       } else if (roleNames.includes('PENYEWA')) {
         navigate('/penyewa/dashboard');
+      } else if (roleNames.includes('ADMIN')) {
+        navigate('/admin/dashboard');
       } else {
         navigate('/'); // default fallback
       }

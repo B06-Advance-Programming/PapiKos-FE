@@ -1,34 +1,52 @@
+/* Base resets */
+.navbar a,
+.navbar button {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  outline-offset: 2px;
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+/* Navbar container */
 .navbar {
-  background-color: #333;
+  background-color: #222; /* Dark flat black/grey */
   height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: 999;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
 }
 
 .navbar-container {
+  max-width: 1140px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  height: 60px;
   padding: 0 24px;
 }
 
+/* Logo styling */
 .navbar-logo {
-  color: #fff;
-  text-decoration: none;
+  color: #eee; /* Light gray */
+  font-weight: 700;
   font-size: 1.8rem;
-  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-decoration: none;
   display: flex;
   align-items: center;
+  user-select: none;
+  transition: color 0.3s ease;
 }
 
+.navbar-logo:hover,
+.navbar-logo:focus {
+  color: #08f; /* Strong blue on hover/focus */
+}
+
+/* Nav menu layout */
 .nav-menu {
   display: flex;
   align-items: center;
@@ -37,28 +55,83 @@
   padding: 0;
 }
 
+/* Nav item spacing */
 .nav-item {
+  margin-left: 20px;
   height: 60px;
   display: flex;
   align-items: center;
 }
 
+/* Nav links */
 .nav-link {
-  color: #fff;
+  color: #ddd; /* Slightly muted light gray */
   text-decoration: none;
-  padding: 0 16px;
-  height: 100%;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
 }
 
-.nav-link:hover {
-  color: #4a90e2;
+.nav-link:hover,
+.nav-link:focus {
+  background-color: #333; /* Dark highlight */
+  color: #08f;
+  outline: none;
 }
 
+/* Active nav link */
 .nav-link.active {
-  color: #4a90e2;
-  border-bottom: 3px solid #4a90e2;
+  color: #08f;
+  border-bottom: 2px solid #08f;
+  cursor: default;
+  font-weight: 700;
+}
+
+/* Logout button styling */
+.logout-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  color: #f33; /* Red */
+  cursor: pointer;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  user-select: none;
+}
+
+.logout-btn:hover,
+.logout-btn:focus {
+  background-color: #f33; /* red background on hover */
+  color: white;
+  border-color: #d00;
+  outline: none;
+}
+
+.logout-btn:active {
+  background-color: #a00;
+  border-color: #a00;
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .navbar-container {
+    padding: 0 16px;
+  }
+  .nav-item {
+    margin-left: 12px;
+  }
+  .navbar-logo {
+    font-size: 1.4rem;
+  }
+  .nav-link,
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
 }
