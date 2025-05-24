@@ -5,6 +5,7 @@ import {
   getAllKupons,
   deleteKupon
 } from "../../api/kuponApi";
+import { useAuth } from '../../contexts/AuthContext';
 import "./kuponList.css";
 
 export default function KuponList() {
@@ -12,6 +13,9 @@ export default function KuponList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { roles } = useAuth();
+
+  console.log("Role saat ini:", roles); // Debugging
 
   useEffect(() => {
     getAllKupons()
@@ -38,9 +42,11 @@ export default function KuponList() {
     <div className="container">
       <div className="header">
         <h1 className="title">Daftar Kupon</h1>
-        <Link to="/kupon/new" className="create-button">
-          + Buat Kupon Baru
-        </Link>
+        {(roles.includes("ADMIN") || roles.includes("PEMILIK")) && (
+          <Link to="/kupon/new" className="create-button">
+            + Buat Kupon Baru
+          </Link>
+        )}
       </div>
       <div className="grid">
         {kupons.map((kupon) => (
@@ -57,23 +63,32 @@ export default function KuponList() {
             <p><strong>Jumlah:</strong> {kupon.quantity}</p>
             <p><strong>Kost Pemilik:</strong> {kupon.kosPemilik?.join(", ") || "-"}</p>
             <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-              <Link to={`/kupon/${kupon.idKupon}`} className="detailButton" style={{ flex: 1, backgroundColor: '#ff6f61' }}>
+              <Link
+                to={`/kupon/${kupon.idKupon}`}
+                className="detailButton"
+                style={{ flex: 1, backgroundColor: '#ff6f61' }}
+              >
                 Detail
               </Link>
-              <Link 
-                to={`/kupon/${kupon.idKupon}/edit`} 
-                className="detailButton" 
-                style={{ flex: 1, backgroundColor: '#ffc107' }}
-              >
-                Edit
-              </Link>
-              <button 
-                className="detailButton" 
-                onClick={() => handleDelete(kupon.idKupon)}
-                style={{ flex: 1, backgroundColor: '#dc3545' }}
-              >
-                Hapus
-              </button>
+
+              {(roles.includes("ADMIN") || roles.includes("PEMILIK")) && (
+                <>
+                  <Link
+                    to={`/kupon/${kupon.idKupon}/edit`}
+                    className="detailButton"
+                    style={{ flex: 1, backgroundColor: '#ffc107' }}
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    className="detailButton"
+                    onClick={() => handleDelete(kupon.idKupon)}
+                    style={{ flex: 1, backgroundColor: '#dc3545' }}
+                  >
+                    Hapus
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))}

@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './modules/home/Home';
 import Login from './modules/auth/Login';
 import Register from './modules/auth/Register';
-import NotFound from './modules/NotFound';
 import KuponList from './modules/kupon/kuponList';
 import KuponDetail from './modules/kupon/kuponDetail';
 import KuponForm from './modules/kupon/KuponForm';
@@ -55,8 +54,16 @@ function App() {
             <Route path="/auth/register" element={<Register />} />
 
             {/* Public access */}
-            <Route path="/kupon" element={<KuponList />} />
-            <Route path="/kupon/:id" element={<KuponDetail />} />
+            <Route path="/kupon"
+             element={
+              <RequireRole allowedRoles={['PEMILIK', 'ADMIN', 'PENYEWA']}>
+                  <KuponList />
+                </RequireRole>
+             } 
+             />
+            <Route path="/kupon/:id" element={<RequireRole allowedRoles={['PEMILIK', 'ADMIN', 'PENYEWA']}>
+                  <KuponDetail />
+                </RequireRole>} />
 
             {/* Protected Kupon Create and Edit for PEMILIK or ADMIN */}
             <Route
