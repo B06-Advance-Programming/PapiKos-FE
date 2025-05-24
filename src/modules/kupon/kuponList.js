@@ -1,6 +1,6 @@
 // src/components/KuponList.js
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   getAllKupons,
   deleteKupon
@@ -12,7 +12,6 @@ export default function KuponList() {
   const [kupons, setKupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
   const { roles } = useAuth();
 
   console.log("Role saat ini:", roles); // Debugging
