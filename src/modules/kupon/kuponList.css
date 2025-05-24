@@ -1,0 +1,118 @@
+.container {
+    padding: 20px 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fdfdfd;
+    min-height: 100vh;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 0 20px;
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #ff6f61;
+    margin: 0;
+  }
+  
+  .create-button {
+    background-color: #ff6f61;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .create-button:hover {
+    background-color: #e74c3c;
+  }
+  
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .card {
+    width: 280px;
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background-color: #ff6f61;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cardTitle {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff6f61;
+    margin-bottom: 12px;
+  }
+  
+  .card p {
+    font-size: 14px;
+    margin: 6px 0;
+    color: #333;
+  }
+  
+  .detailButton {
+    margin-top: auto;
+    padding: 10px;
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+  
+  .detailButton:hover {
+    background-color: #e74c3c;
+  }
+  
+  .status-valid {
+    color: #27ae60;
+    font-weight: bold;
+  }
+  
+  .status-invalid {
+    color: #c0392b;
+    font-weight: bold;
+  }
+  

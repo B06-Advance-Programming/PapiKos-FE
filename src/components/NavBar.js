@@ -27,8 +27,8 @@ const NavBar = () => {
 
           {/* Dynamic Home link */}
           <li className="nav-item">
-            <Link 
-              to={homeLink} 
+            <Link
+              to={homeLink}
               className={`nav-link ${location.pathname === homeLink ? 'active' : ''}`}
             >
               Home
@@ -73,10 +73,16 @@ const NavBar = () => {
 
           {/* Logged in as Pemilik: just show Logout */}
           {isPemilik && !isPenyewa && (
-            <li className="nav-item">
-              <button className="nav-link logout-btn" onClick={logout}>Logout</button>
-            </li>
+            <>
+              <li className="nav-item">
+                <Link to="/kupon" className="nav-link">Kupon</Link>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link logout-btn" onClick={logout}>Logout</button>
+              </li>
+            </>
           )}
+
 
           {/* Logged in as Admin: just show Logout */}
           {isAdmin && !isPenyewa && !isPemilik && (
