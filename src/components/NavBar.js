@@ -60,6 +60,17 @@ const NavBar = () => {
             </>
           )}
 
+          {/* Show Payment link only if Penyewa or Pemilik */}
+          {paymentLink && (
+            <li className="nav-item">
+              <Link
+                to={paymentLink}
+                className={`nav-link ${location.pathname === paymentLink ? 'active' : ''}`}>
+                Payment
+              </Link>
+            </li>
+          )}
+
           {/* Logged in as Penyewa: show Wishlist + Logout */}
           {isPenyewa && (
             <>
@@ -77,17 +88,6 @@ const NavBar = () => {
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
               </li>
             </>
-          )}
-
-          {/* Show Payment link only if Penyewa or Pemilik */}
-          {paymentLink && (
-            <li className="nav-item">
-              <Link
-                to={paymentLink}
-                className={`nav-link ${location.pathname === paymentLink ? 'active' : ''}`}>
-                Payment
-              </Link>
-            </li>
           )}
 
           {/* Logged in as Pemilik: just show Logout */}
