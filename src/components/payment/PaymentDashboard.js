@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -148,7 +148,7 @@ export default function PaymentDashboard() {
   const [paymentError, setPaymentError] = useState(null);
 
   // Parse roles from localStorage or default empty array
-  const storedRoles = React.useMemo(() => {
+  const storedRoles = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("userRoles")) || [];
     } catch {
@@ -157,7 +157,7 @@ export default function PaymentDashboard() {
   }, []);
 
   // Fetch transaction history function
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (!token) {
       setIsLoading(false);
       setError("User tidak terautentikasi (token tidak tersedia).");
@@ -174,15 +174,12 @@ export default function PaymentDashboard() {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await fetch(
-        `${API_BASE_URL}/api/payments/history/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/payments/history/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!res.ok) {
         const errMsg = await res.text();
@@ -197,10 +194,10 @@ export default function PaymentDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token, user]);
 
   // Fetch penyewaan kos with status DIAJUKAN for current user
-  const fetchPenyewaanDiajukan = async () => {
+  const fetchPenyewaanDiajukan = useCallback(async () => {
     if (!token || !user?.id) {
       setErrorPenyewaan("User tidak terautentikasi atau ID tidak ada.");
       setPenyewaanList([]);
@@ -233,24 +230,22 @@ export default function PaymentDashboard() {
     } finally {
       setLoadingPenyewaan(false);
     }
-  };
+  }, [token, user]);
 
   useEffect(() => {
     fetchHistory();
-  }, [token, user]);
+  }, [fetchHistory]);
 
   useEffect(() => {
     if (activeTab === "bayarkos" && storedRoles.includes("PENYEWA")) {
       fetchPenyewaanDiajukan();
     }
-  }, [activeTab, token, storedRoles, user]);
+  }, [activeTab, storedRoles, fetchPenyewaanDiajukan]);
 
   // Handle “Bayar Sekarang” click
   const handleBayarSekarang = (penyewaan) => {
     setSelectedPenyewaan(penyewaan);
-    const confirmCoupon = window.confirm(
-      "Apakah Anda ingin memasukkan kupon diskon?"
-    );
+    const confirmCoupon = window.confirm("Apakah Anda ingin memasukkan kupon diskon?");
     if (confirmCoupon) {
       setCouponCode("");
       setCouponModalOpen(true);
@@ -274,24 +269,21 @@ export default function PaymentDashboard() {
       const body = {
         userId: user.id,
         ownerId: penyewaan.ownerId ?? penyewaan.owner, // fallback if needed, adjust based on your data!
-        kostId: penyewaan.kostId ?? penyewaan.kost,    // likewise adjust
+        kostId: penyewaan.kostId ?? penyewaan.kost, // likewise adjust
         couponCode: coupon?.trim() || null,
         description: "Bayar kost via dashboard",
       };
 
       if (!body.couponCode) delete body.couponCode;
 
-      const res = await fetch(
-        "${API_BASE_URL}/api/payments/kost",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/payments/kost`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
       if (!res.ok) {
         const errText = await res.text();
@@ -334,27 +326,22 @@ export default function PaymentDashboard() {
     }
 
     try {
-      const res = await fetch(
-        "${API_BASE_URL}/api/payments/topup",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            amount: parseInt(topupAmount, 10),
-            description: "Top up saldo lewat dashboard",
-          }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/api/payments/topup`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          amount: parseInt(topupAmount, 10),
+          description: "Top up saldo lewat dashboard",
+        }),
+      });
 
       if (!res.ok) {
         const errResp = await res.text();
-        throw new Error(
-          errResp || "Terjadi kesalahan saat mencoba melakukan Top Up"
-        );
+        throw new Error(errResp || "Terjadi kesalahan saat mencoba melakukan Top Up");
       }
 
       setTopupAmount("");
