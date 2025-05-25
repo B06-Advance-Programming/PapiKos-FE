@@ -17,7 +17,6 @@ import PenyewaDashboard from './penyewa/PenyewaDashboard';
 import PemilikDashboard from './pemilik/PemilikDashboard';
 import RequireRole from './components/RequireRole';
 
-import PaymentDashboard from './components/payment/PaymentDashboard'; // <= Add this import!
 import './App.css';
 
 function App() {
