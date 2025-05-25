@@ -1,109 +1,51 @@
-.form-container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-}
-
-.form-title {
-  color: #ff6f61;
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.kupon-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-weight: 500;
-  color: #333;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 10px;
+.kost-select {
+  flex: 1;
+  padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
 }
 
-.form-group textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #ff6f61;
-  box-shadow: 0 0 0 2px rgba(255, 111, 97, 0.1);
-}
-
-.error-message {
-  color: #dc3545;
-  background-color: #ffe6e6;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.loading {
-  text-align: center;
-  color: #666;
-  padding: 20px;
-}
-
-.form-actions {
+.kost-input-group {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
 }
 
-.submit-button,
-.cancel-button {
-  flex: 1;
+.no-kost-message {
+  color: #666;
+  font-style: italic;
   padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  background-color: #f9f9f9;
+  border-radius: 4px;
 }
 
-.submit-button {
-  background-color: #ff6f61;
-  color: white;
+.info-message {
+  color: #666;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
-.submit-button:hover {
-  background-color: #e74c3c;
+.selected-kosts-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 8px 0;
 }
 
-.submit-button:disabled {
-  background-color: #ffaa9f;
-  cursor: not-allowed;
+.selected-kost-item {
+  padding: 8px 12px;
+  background-color: #e8f5e8;
+  border: 1px solid #c3e6c3;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.cancel-button {
-  background-color: #f8f9fa;
-  color: #333;
-  border: 1px solid #ddd;
+.uuid-display {
+  font-size: 11px;
+  color: #666;
+  font-family: monospace;
 }
-
-.cancel-button:hover {
-  background-color: #e9ecef;
-} 
