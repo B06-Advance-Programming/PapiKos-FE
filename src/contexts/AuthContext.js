@@ -23,8 +23,16 @@ export function AuthProvider({ children }) {
       .then((user) => {
         if (user) {
           setUser(user);
-          setRoles(user.roles.map((r) => r.name));
+
+          const rolesArr = user.roles.map((r) => r.name);
+          setRoles(rolesArr);
+          // Store roles names array as JSON string in localStorage
+          localStorage.setItem("userRoles", JSON.stringify(rolesArr));
+
           setIsLoggedIn(true);
+
+          // Store userId in localStorage
+          localStorage.setItem("userId", user.id);
         }
         setIsLoading(false);
       })
@@ -32,7 +40,6 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    // Your login logic
     const loginRes = await fetch(
       "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/auth/login",
       {
@@ -59,9 +66,16 @@ export function AuthProvider({ children }) {
     if (!userRes.ok) throw new Error("Failed to fetch user info");
     const user = await userRes.json();
     setUser(user);
-    setRoles(user.roles.map((r) => r.name));
+
+    const rolesArr = user.roles.map((r) => r.name);
+    setRoles(rolesArr);
+    // Store roles names array as JSON string in localStorage
+    localStorage.setItem("userRoles", JSON.stringify(rolesArr));
+
     setIsLoggedIn(true);
     setIsLoading(false);
+
+    localStorage.setItem("userId", user.id); // store userId after login
 
     return user;
   };
@@ -69,6 +83,8 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("tokenExpire");
+    localStorage.removeItem("userId");  // remove userId on logout
+    localStorage.removeItem("userRoles"); // remove stored roles on logout
     setUser(null);
     setRoles([]);
     setIsLoggedIn(false);
@@ -76,7 +92,17 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, roles, isLoggedIn, login, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        roles,
+        isLoggedIn,
+        login,
+        logout,
+        isLoading,
+        token: localStorage.getItem("jwtToken"),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

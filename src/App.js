@@ -7,13 +7,14 @@ import Register from './modules/auth/Register';
 import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
 import NavBar from './components/NavBar';
-import { AuthProvider, useAuth } from './contexts/AuthContext'; 
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 import AdminDashboard from './admin/AdminDashboard';
 import PenyewaDashboard from './penyewa/PenyewaDashboard';
 import PemilikDashboard from './pemilik/PemilikDashboard';
 import RequireRole from './components/RequireRole';
 
+import PaymentDashboard from './components/payment/PaymentDashboard'; // <= Add this import!
 import './App.css';
 
 function App() {
@@ -51,7 +52,7 @@ function App() {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
 
-            {/* Protect wishlist page? If yes, wrap with RequireRole */}
+            {/* Protect wishlist page */}
             <Route
               path="/wishlist"
               element={
@@ -84,6 +85,24 @@ function App() {
               element={
                 <RequireRole allowedRoles={['PEMILIK']}>
                   <PemilikDashboard />
+                </RequireRole>
+              }
+            />
+
+            {/* Payment Dashboard routes for Penyewa and Pemilik */}
+            <Route
+              path="/penyewa/payment"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PaymentDashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/pemilik/payment"
+              element={
+                <RequireRole allowedRoles={['PEMILIK']}>
+                  <PaymentDashboard />
                 </RequireRole>
               }
             />
