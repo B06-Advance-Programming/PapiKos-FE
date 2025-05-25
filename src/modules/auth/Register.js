@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Register = () => {
   const [form, setForm] = useState({
     username: '',
@@ -31,7 +33,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch('https://staging-inthekost-b6afc6b23ff0.herokuapp.com/auth/signup', {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

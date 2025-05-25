@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Home from './modules/home/Home';
 import Login from './modules/auth/Login';
 import Register from './modules/auth/Register';
+import KuponList from './modules/kupon/kuponList';
+import KuponDetail from './modules/kupon/kuponDetail';
+import KuponForm from './modules/kupon/KuponForm';
 import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
 import NavBar from './components/NavBar';
@@ -48,11 +51,41 @@ function App() {
         <div className="app-container">
           <Routes>
             <Route path="/" element={<HomeRedirect />} />
-
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
 
             {/* Protect wishlist page */}
+            {/* Public access */}
+            <Route path="/kupon"
+             element={
+              <RequireRole allowedRoles={['PEMILIK', 'ADMIN', 'PENYEWA']}>
+                  <KuponList />
+                </RequireRole>
+             } 
+             />
+            <Route path="/kupon/:id" element={<RequireRole allowedRoles={['PEMILIK', 'ADMIN', 'PENYEWA']}>
+                  <KuponDetail />
+                </RequireRole>} />
+
+            {/* Protected Kupon Create and Edit for PEMILIK or ADMIN */}
+            <Route
+              path="/kupon/new"
+              element={
+                <RequireRole allowedRoles={['PEMILIK', 'ADMIN']}>
+                  <KuponForm />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/kupon/:id/edit"
+              element={
+                <RequireRole allowedRoles={['PEMILIK', 'ADMIN']}>
+                  <KuponForm />
+                </RequireRole>
+              }
+            />
+
+            {/* Wishlist protected for PENYEWA */}
             <Route
               path="/wishlist"
               element={
@@ -62,6 +95,7 @@ function App() {
               }
             />
 
+            {/* Dashboards */}
             <Route
               path="/admin/dashboard"
               element={
@@ -70,7 +104,6 @@ function App() {
                 </RequireRole>
               }
             />
-
             <Route
               path="/penyewa/dashboard"
               element={
@@ -79,7 +112,6 @@ function App() {
                 </RequireRole>
               }
             />
-
             <Route
               path="/pemilik/dashboard"
               element={
@@ -89,24 +121,7 @@ function App() {
               }
             />
 
-            {/* Payment Dashboard routes for Penyewa and Pemilik */}
-            <Route
-              path="/penyewa/payment"
-              element={
-                <RequireRole allowedRoles={['PENYEWA']}>
-                  <PaymentDashboard />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/pemilik/payment"
-              element={
-                <RequireRole allowedRoles={['PEMILIK']}>
-                  <PaymentDashboard />
-                </RequireRole>
-              }
-            />
-
+            {/* Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

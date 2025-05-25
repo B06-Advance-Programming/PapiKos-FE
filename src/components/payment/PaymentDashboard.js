@@ -174,7 +174,7 @@ export default function PaymentDashboard() {
       setIsLoading(true);
       setError(null);
       const res = await fetch(
-        `https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/payments/history/${userId}`,
+        `${API_BASE_URL}/api/payments/history/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -210,7 +210,7 @@ export default function PaymentDashboard() {
 
     try {
       const res = await fetch(
-        `https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/payments/penyewaan/diajukan?userId=${user.id}`,
+        `${API_BASE_URL}/api/payments/penyewaan/diajukan?userId=${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -281,7 +281,7 @@ export default function PaymentDashboard() {
       if (!body.couponCode) delete body.couponCode;
 
       const res = await fetch(
-        "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/payments/kost",
+        "${API_BASE_URL}/api/payments/kost",
         {
           method: "POST",
           headers: {
@@ -334,7 +334,7 @@ export default function PaymentDashboard() {
 
     try {
       const res = await fetch(
-        "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/payments/topup",
+        "${API_BASE_URL}/api/payments/topup",
         {
           method: "POST",
           headers: {
@@ -391,7 +391,7 @@ export default function PaymentDashboard() {
       params.append("endDateTime", filterEnd);
 
       const res = await fetch(
-        `https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/payments/history/${user.id}/filter?${params.toString()}`,
+        `${API_BASE_URL}/api/payments/history/${user.id}/filter?${params.toString()}`,
         {
           method: "GET",
           headers: {

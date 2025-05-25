@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 const AuthContext = createContext();
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    fetch("https://staging-inthekost-b6afc6b23ff0.herokuapp.com/users/me", {
+    fetch(`${API_BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -41,7 +42,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const loginRes = await fetch(
-      "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/auth/login",
+      `${API_BASE_URL}/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,7 +59,7 @@ export function AuthProvider({ children }) {
 
     // Get user data
     const userRes = await fetch(
-      "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/users/me",
+      `${API_BASE_URL}/users/me`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
