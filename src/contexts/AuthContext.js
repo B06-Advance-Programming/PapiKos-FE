@@ -61,6 +61,7 @@ export function AuthProvider({ children }) {
     const user = await userRes.json();
     setUser(user);
     setRoles(user.roles.map((r) => r.name));
+    localStorage.setItem("userId", user.id);
     setIsLoggedIn(true);
     setIsLoading(false);
 
@@ -70,6 +71,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("tokenExpire");
+    localStorage.removeItem("userId");
     setUser(null);
     setRoles([]);
     setIsLoggedIn(false);

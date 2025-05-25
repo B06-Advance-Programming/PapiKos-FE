@@ -10,6 +10,8 @@ import KuponForm from './modules/kupon/KuponForm';
 import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
 import NavBar from './components/NavBar';
+import PenyewaSearchPage from './components/penyewaan/PenyewaSearchPage';
+import PenyewaBookingsPage from './components/penyewaan/PenyewaBookingsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 import AdminDashboard from './admin/AdminDashboard';
@@ -110,6 +112,25 @@ function App() {
                 </RequireRole>
               }
             />
+
+            <Route
+              path="/penyewa/search"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PenyewaSearchPage />
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/penyewa/bookings"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PenyewaBookingsPage />
+                </RequireRole>
+              }
+            />
+
             <Route
               path="/pemilik/dashboard"
               element={
