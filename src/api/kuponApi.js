@@ -1,5 +1,7 @@
 // src/api/kuponApi.js
-const BASE_URL = "https://staging-inthekost-b6afc6b23ff0.herokuapp.com/api/kupon";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const BASE_URL = `${API_BASE_URL}/api/kupon`;
 
 const token = localStorage.getItem("jwtToken");
 
