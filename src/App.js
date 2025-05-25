@@ -17,6 +17,7 @@ import PenyewaDashboard from './penyewa/PenyewaDashboard';
 import PemilikDashboard from './pemilik/PemilikDashboard';
 import RequireRole from './components/RequireRole';
 
+import PaymentDashboard from './components/payment/PaymentDashboard'; // <= Add this import!
 import './App.css';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
 
+            {/* Protect wishlist page */}
             {/* Public access */}
             <Route path="/kupon"
              element={
