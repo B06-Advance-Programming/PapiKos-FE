@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 // Helper formatting functions
 function formatDate(isoString) {
