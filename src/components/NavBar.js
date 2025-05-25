@@ -11,6 +11,11 @@ const NavBar = () => {
   const isPenyewa = roles.includes('PENYEWA');
   const isAdmin = roles.includes('ADMIN');
 
+  // Payment path per role
+  let paymentLink = null;
+  if (isPenyewa) paymentLink = '/penyewa/payment';
+  else if (isPemilik) paymentLink = '/pemilik/payment';
+
   // Determine the home/dashboard link
   let homeLink = '/';
   if (user) {
@@ -72,6 +77,17 @@ const NavBar = () => {
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
               </li>
             </>
+          )}
+
+          {/* Show Payment link only if Penyewa or Pemilik */}
+          {paymentLink && (
+            <li className="nav-item">
+              <Link
+                to={paymentLink}
+                className={`nav-link ${location.pathname === paymentLink ? 'active' : ''}`}>
+                Payment
+              </Link>
+            </li>
           )}
 
           {/* Logged in as Pemilik: just show Logout */}
