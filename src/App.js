@@ -10,6 +10,8 @@ import KuponForm from './modules/kupon/KuponForm';
 import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
 import NavBar from './components/NavBar';
+import PenyewaSearchPage from './components/penyewaan/PenyewaSearchPage';
+import PenyewaBookingsPage from './components/penyewaan/PenyewaBookingsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 import AdminDashboard from './admin/AdminDashboard';
@@ -17,6 +19,7 @@ import PenyewaDashboard from './penyewa/PenyewaDashboard';
 import PemilikDashboard from './pemilik/PemilikDashboard';
 import RequireRole from './components/RequireRole';
 
+import PaymentDashboard from './components/payment/PaymentDashboard';
 import './App.css';
 
 function App() {
@@ -53,6 +56,7 @@ function App() {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
 
+            {/* Protect wishlist page */}
             {/* Public access */}
             <Route path="/kupon"
              element={
@@ -110,11 +114,50 @@ function App() {
                 </RequireRole>
               }
             />
+
+            <Route
+              path="/penyewa/search"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PenyewaSearchPage />
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/penyewa/bookings"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PenyewaBookingsPage />
+                </RequireRole>
+              }
+            />
+
             <Route
               path="/pemilik/dashboard"
               element={
                 <RequireRole allowedRoles={['PEMILIK']}>
                   <PemilikDashboard />
+                </RequireRole>
+              }
+            />
+
+            {/* Penyewa Payment */}
+            <Route
+              path="/penyewa/payment"
+              element={
+                <RequireRole allowedRoles={['PENYEWA']}>
+                  <PaymentDashboard />
+                </RequireRole>
+              }
+            />
+
+            {/* Pemilik Payment */}
+            <Route
+              path="/pemilik/payment"
+              element={
+                <RequireRole allowedRoles={['PEMILIK']}>
+                  <PaymentDashboard />
                 </RequireRole>
               }
             />
