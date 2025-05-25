@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import {
   getAllKupons,
-  deleteKupon
+  deleteKupon,
+  getKuponsByOwnerId,
 } from "../../api/kuponApi";
 import { useAuth } from '../../contexts/AuthContext';
 import "./kuponList.css";
@@ -12,16 +13,33 @@ export default function KuponList() {
   const [kupons, setKupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { roles } = useAuth();
+  const { roles, user } = useAuth();
 
   console.log("Role saat ini:", roles); // Debugging
+  const isAdmin = roles.includes("ADMIN");
+  const isPemilik = roles.includes("PEMILIK");
+  const canEditOrDelete = isAdmin || isPemilik;
+
 
   useEffect(() => {
-    getAllKupons()
-      .then(setKupons)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+    const fetchKupons = async () => {
+      try {
+        let data = [];
+        if (isPemilik && user?.id) {
+          data = await getKuponsByOwnerId(user.id);
+        } else {
+          data = await getAllKupons();
+        }
+        setKupons(data);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchKupons();
+  }, [isPemilik, user]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus kupon ini?')) {
@@ -41,7 +59,7 @@ export default function KuponList() {
     <div className="container">
       <div className="header">
         <h1 className="title">Daftar Kupon</h1>
-        {(roles.includes("ADMIN") || roles.includes("PEMILIK")) && (
+        {canEditOrDelete && (
           <Link to="/kupon/new" className="create-button">
             + Buat Kupon Baru
           </Link>
@@ -60,7 +78,12 @@ export default function KuponList() {
             </p>
             <p><strong>Deskripsi:</strong> {kupon.deskripsi}</p>
             <p><strong>Jumlah:</strong> {kupon.quantity}</p>
-            <p><strong>Kost Pemilik:</strong> {kupon.kosPemilik?.join(", ") || "-"}</p>
+            <p>
+              <strong>Kost Pemilik:</strong>{" "}
+              {kupon.kosPemilik && kupon.kosPemilik.length > 0
+                ? kupon.kosPemilik.map(k => k.nama).join(", ")
+                : "-"}
+            </p>
             <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
               <Link
                 to={`/kupon/${kupon.idKupon}`}
@@ -70,7 +93,7 @@ export default function KuponList() {
                 Detail
               </Link>
 
-              {(roles.includes("ADMIN") || roles.includes("PEMILIK")) && (
+              {canEditOrDelete && (
                 <>
                   <Link
                     to={`/kupon/${kupon.idKupon}/edit`}

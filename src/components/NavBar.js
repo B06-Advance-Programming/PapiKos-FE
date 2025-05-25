@@ -19,11 +19,6 @@ const NavBar = () => {
     else if (isPemilik) homeLink = '/pemilik/dashboard';
   }
 
-  // Payment path per role
-  let paymentLink = null;
-  if (isPenyewa) paymentLink = '/penyewa/payment';
-  else if (isPemilik) paymentLink = '/pemilik/payment';
-
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -60,17 +55,6 @@ const NavBar = () => {
             </>
           )}
 
-          {/* Show Payment link only if Penyewa or Pemilik */}
-          {paymentLink && (
-            <li className="nav-item">
-              <Link
-                to={paymentLink}
-                className={`nav-link ${location.pathname === paymentLink ? 'active' : ''}`}>
-                Payment
-              </Link>
-            </li>
-          )}
-
           {/* Logged in as Penyewa: show Wishlist + Logout */}
           {isPenyewa && (
             <>
@@ -82,9 +66,7 @@ const NavBar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/penyewa/bookings" className={`nav-link ${location.pathname === '/penyewa/bookings' ? 'active' : ''}`}>
-                  My Bookings
-                </Link>
+                <Link to="/kupon" className="nav-link">Kupon</Link>
               </li>
               <li className="nav-item">
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
@@ -92,7 +74,7 @@ const NavBar = () => {
             </>
           )}
 
-          {/* Logged in as Pemilik: just show Logout (already showed Payment above) */}
+          {/* Logged in as Pemilik: just show Logout */}
           {isPemilik && !isPenyewa && (
             <>
               <li className="nav-item">
@@ -107,9 +89,14 @@ const NavBar = () => {
 
           {/* Logged in as Admin: just show Logout */}
           {isAdmin && !isPenyewa && !isPemilik && (
-            <li className="nav-item">
-              <button className="nav-link logout-btn" onClick={logout}>Logout</button>
-            </li>
+            <>
+              <li className="nav-item">
+                <Link to="/kupon" className="nav-link">Kupon</Link>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link logout-btn" onClick={logout}>Logout</button>
+              </li>
+            </>
           )}
 
         </ul>
