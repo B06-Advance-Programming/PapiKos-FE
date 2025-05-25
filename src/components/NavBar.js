@@ -82,6 +82,11 @@ const NavBar = () => {
                 </Link>
               </li>
               <li className="nav-item">
+                <Link to="/penyewa/bookings" className={`nav-link ${location.pathname === '/penyewa/bookings' ? 'active' : ''}`}>
+                  My Bookings
+                </Link>
+              </li>
+              <li className="nav-item">
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
               </li>
             </>

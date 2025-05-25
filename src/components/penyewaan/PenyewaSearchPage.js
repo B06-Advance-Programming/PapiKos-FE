@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { fetchAllKosts, createPenyewaan } from '../api/penyewaanApi';
+import React, { useState } from 'react';
+import { searchKosts, createPenyewaan } from '../../api/penyewaanApi';
 import './PenyewaanKos.css';
 
-const PenyewaDashboard = () => {
-  const [kosts, setKosts] = useState([]);
+const PenyewaSearchPage = () => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedKostId, setSelectedKostId] = useState(null);
   const [form, setForm] = useState({
@@ -13,9 +14,14 @@ const PenyewaDashboard = () => {
     durasiBulan: 1
   });
 
-  useEffect(() => {
-    fetchAllKosts().then(setKosts).catch(err => console.error('Failed to fetch kosts', err));
-  }, []);
+  const handleSearch = async () => {
+    try {
+      const data = await searchKosts(query);
+      setResults(data);
+    } catch (err) {
+      console.error('Failed to search:', err);
+    }
+  };
 
   const openForm = (kostId) => {
     setSelectedKostId(kostId);
@@ -43,7 +49,6 @@ const PenyewaDashboard = () => {
       const userId = localStorage.getItem('userId');
       await createPenyewaan({
         ...form,
-        status: 'DIAJUKAN',
         kostId: selectedKostId,
         userId
       });
@@ -57,18 +62,32 @@ const PenyewaDashboard = () => {
 
   return (
     <div className="penyewa-container">
-      <h2>All Available Kosts</h2>
+      <h2>Search Kos</h2>
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by name or location"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        <button onClick={handleSearch} className="btn-primary">Search</button>
+      </div>
+
       <div className="card-grid">
-        {kosts.map(kost => (
-          <div className="kost-card" key={kost.kostID}>
-            <h4>{kost.nama}</h4>
-            <p>{kost.alamat}</p>
-            <p>{kost.deskripsi}</p>
-            <p>Rooms: {kost.jumlahKamar}</p>
-            <p>Price: {kost.hargaPerBulan}</p>
-            <button className="btn-primary" onClick={() => openForm(kost.kostID)}>Sewa</button>
-          </div>
-        ))}
+        {results.length === 0 ? (
+          <p>No results found.</p>
+        ) : (
+          results.map(kost => (
+            <div className="kost-card" key={kost.kostID}>
+              <h4>{kost.nama}</h4>
+              <p>{kost.alamat}</p>
+              <p>{kost.deskripsi}</p>
+              <p>Rooms: {kost.jumlahKamar}</p>
+              <p>Price per month: {kost.hargaPerBulan}</p>
+              <button className="btn-primary" onClick={() => openForm(kost.kostID)}>Sewa</button>
+            </div>
+          ))
+        )}
       </div>
 
       {showForm && (
@@ -120,4 +139,4 @@ const PenyewaDashboard = () => {
   );
 };
 
-export default PenyewaDashboard;
+export default PenyewaSearchPage;
