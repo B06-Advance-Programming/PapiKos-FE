@@ -3,27 +3,31 @@ import { useAuth } from '../contexts/AuthContext';
 import { addToWishlist, removeFromWishlist, isInWishlist } from '../api/wishlistApi';
 import './KostCard.css';
 
-const KostCard = ({ kost }) => {
+const KostCard = ({ kost, initialWishlistStatus = null }) => {
   const { roles } = useAuth();
-  const [inWishlist, setInWishlist] = useState(false);
+  const [inWishlist, setInWishlist] = useState(initialWishlistStatus ?? false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [statusChecked, setStatusChecked] = useState(initialWishlistStatus !== null);
   
-  const isPenyewa = roles.includes('PENYEWA');const userId = localStorage.getItem('userId');
-
-  // Check if item is in wishlist when component mounts
+  const isPenyewa = roles.includes('PENYEWA');
+  const userId = localStorage.getItem('userId');
+  // Check if item is in wishlist when component mounts (only if not provided as prop)
   useEffect(() => {
     const checkWishlistStatus = async () => {
-      if (isPenyewa && userId && kost.kostID) {        try {
+      if (!statusChecked && isPenyewa && userId && kost.kostID) {
+        try {
           const result = await isInWishlist(userId, kost.kostID);
           setInWishlist(result?.inWishlist || false);
+          setStatusChecked(true);
         } catch (error) {
           console.error('Error checking wishlist status:', error);
+          setStatusChecked(true);
         }
       }
     };
     
     checkWishlistStatus();
-  }, [isPenyewa, userId, kost.kostID]);
+  }, [isPenyewa, userId, kost.kostID, statusChecked]);
   
   const handleWishlistToggle = async (e) => {
     e.stopPropagation(); // Prevent event bubbling
@@ -33,18 +37,24 @@ const KostCard = ({ kost }) => {
       return;
     }
     
+    if (wishlistLoading) return; // Prevent double clicks
+    
+    // Optimistic update - immediately change UI
+    const previousState = inWishlist;
+    setInWishlist(!inWishlist);
     setWishlistLoading(true);
     
     try {
-      if (inWishlist) {
+      if (previousState) {
         await removeFromWishlist(userId, kost.kostID);
-        setInWishlist(false);
       } else {
         await addToWishlist(userId, kost.kostID);
-        setInWishlist(true);
       }
+      // If successful, the optimistic update was correct
     } catch (error) {
       console.error('Error updating wishlist:', error);
+      // Revert optimistic update on error
+      setInWishlist(previousState);
       alert('Failed to update wishlist. Please try again.');
     } finally {
       setWishlistLoading(false);

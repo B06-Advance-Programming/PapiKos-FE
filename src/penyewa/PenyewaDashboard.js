@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchAllKosts, createPenyewaan } from '../api/penyewaanApi';
-import { addToWishlist, removeFromWishlist, isInWishlist } from '../api/wishlistApi';
+import { addToWishlist, removeFromWishlist, bulkCheckWishlist } from '../api/wishlistApi';
 import './PenyewaanKos.css';
 
 const PenyewaDashboard = () => {
@@ -17,48 +17,56 @@ const PenyewaDashboard = () => {
     durasiBulan: 1
   });
   const isPenyewa = roles?.includes('PENYEWA');  const userId = localStorage.getItem('userId');
-
   useEffect(() => {
-    fetchAllKosts().then(setKosts).catch(err => console.error('Failed to fetch kosts', err));
-  }, []);
-  // Check wishlist status for all kosts when they're loaded
-  useEffect(() => {
-    const checkAllWishlistStatus = async () => {
-      if (isPenyewa && userId && kosts.length > 0) {
-        const wishlistStatus = {};
-        for (const kost of kosts) {          try {
-            const result = await isInWishlist(userId, kost.kostID);
-            wishlistStatus[kost.kostID] = result?.inWishlist || false;
-          } catch (error) {
-            console.error(`Error checking wishlist status for kost ${kost.kostID}:`, error);
-            wishlistStatus[kost.kostID] = false;
+    const loadKostsAndWishlist = async () => {
+      try {
+        const kostsData = await fetchAllKosts();
+        setKosts(kostsData);
+        
+        // If user is penyewa, bulk check wishlist status
+        if (isPenyewa && userId && kostsData.length > 0) {
+          const kostIds = kostsData.map(kost => kost.kostID).filter(Boolean);
+          if (kostIds.length > 0) {
+            try {
+              const wishlistResults = await bulkCheckWishlist(userId, kostIds);
+              setWishlistStates(wishlistResults);
+            } catch (wishlistError) {
+              console.error('Error loading wishlist status:', wishlistError);
+              // Set all to false as fallback
+              const fallbackStatus = {};
+              kostIds.forEach(id => fallbackStatus[id] = false);
+              setWishlistStates(fallbackStatus);
+            }
           }
         }
-        setWishlistStates(wishlistStatus);
+      } catch (err) {
+        console.error('Failed to fetch kosts', err);
       }
     };
 
-    checkAllWishlistStatus();
-  }, [isPenyewa, userId, kosts]);
-
+    loadKostsAndWishlist();
+  }, [isPenyewa, userId]);
   const handleWishlistToggle = async (kostId) => {
     if (!isPenyewa || !userId) {
       alert('Please log in as a penyewa to add items to wishlist');
       return;
     }
 
+    // Optimistic update - immediately change UI
+    const previousState = wishlistStates[kostId];
+    setWishlistStates(prev => ({ ...prev, [kostId]: !previousState }));
+
     try {
-      const isCurrentlyInWishlist = wishlistStates[kostId];
-      
-      if (isCurrentlyInWishlist) {
+      if (previousState) {
         await removeFromWishlist(userId, kostId);
-        setWishlistStates(prev => ({ ...prev, [kostId]: false }));
       } else {
         await addToWishlist(userId, kostId);
-        setWishlistStates(prev => ({ ...prev, [kostId]: true }));
       }
+      // If successful, the optimistic update was correct
     } catch (error) {
       console.error('Error updating wishlist:', error);
+      // Revert optimistic update on error
+      setWishlistStates(prev => ({ ...prev, [kostId]: previousState }));
       alert('Failed to update wishlist. Please try again.');
     }
   };
