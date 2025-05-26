@@ -96,3 +96,26 @@ export async function cancelBooking(penyewaan) {
   if (!res.ok) throw new Error('Failed to cancel booking');
   return res.json();
 }
+
+export async function setujuiBooking(penyewaan) {
+  const payload = {
+    id: penyewaan.id,
+    namaLengkap: penyewaan.namaLengkap,
+    nomorTelepon: penyewaan.nomorTelepon,
+    tanggalCheckIn: penyewaan.tanggalCheckIn,
+    durasiBulan: penyewaan.durasiBulan,
+    kostId: penyewaan.kostId,
+    userId: penyewaan.userId,
+    status: 'DISETUJUI'
+    // status is set in BE, so no need here
+  };
+
+  const res = await fetch(`${API_BASE_URL}/api/penyewaan`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) throw new Error('Failed to setujui booking');
+  return res.json();
+}

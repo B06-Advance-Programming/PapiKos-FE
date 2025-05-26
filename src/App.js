@@ -21,6 +21,7 @@ import RequireRole from './components/RequireRole';
 
 import PaymentDashboard from './components/payment/PaymentDashboard';
 import './App.css';
+import PemilikBookingPage from "./pemilik/PemilikBookingPage";
 
 function App() {
   // Inline component inside App to handle '/' route redirect based on auth state
@@ -132,6 +133,15 @@ function App() {
                 </RequireRole>
               }
             />
+
+              <Route
+                  path="/pemilik/bookings"
+                  element={
+                      <RequireRole allowedRoles={['PEMILIK']}>
+                          <PemilikBookingPage />
+                      </RequireRole>
+                  }
+              />
 
             <Route
               path="/pemilik/dashboard"
