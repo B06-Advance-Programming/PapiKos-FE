@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { broadcastNotification, createNotification } from '../../api/notificationApi';
+import { broadcastNotification, createNotification, deleteNotification } from '../../api/notificationApi';
 import { getUserIdByEmail } from '../../api/userApi';
 import './AdminNotificationPanel.css';
 
 const AdminNotificationPanel = () => {
   const [message, setMessage] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [deleteNotificationId, setDeleteNotificationId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const [mode, setMode] = useState('broadcast'); // 'broadcast' or 'single'
+  const [mode, setMode] = useState('broadcast'); // 'broadcast', 'single', or 'delete'
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -51,9 +53,34 @@ const AdminNotificationPanel = () => {
     }
   };
 
+  const handleDeleteSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!deleteNotificationId.trim()) {
+      setError('Please enter a notification ID');
+      return;
+    }
+    
+    try {
+      setDeleteLoading(true);
+      setError(null);
+      setSuccess(null);
+      
+      await deleteNotification(deleteNotificationId);
+      setSuccess(`Notification ${deleteNotificationId} deleted successfully`);
+      
+      // Clear form after success
+      setDeleteNotificationId('');
+    } catch (err) {
+      console.error('Delete notification error:', err);
+      setError(err.message || 'Failed to delete notification. Please try again.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
   return (
     <div className="admin-notification-panel">
-      <h2>Send Notifications</h2>
+      <h2>Manage Notifications</h2>
       
       <div className="notification-mode-selector">
         <button 
@@ -68,46 +95,78 @@ const AdminNotificationPanel = () => {
         >
           Send to Specific User
         </button>
-      </div>
+        <button 
+          className={`mode-button ${mode === 'delete' ? 'active' : ''}`}
+          onClick={() => setMode('delete')}
+        >
+          Delete Notification
+        </button>      </div>
       
-      <form onSubmit={handleSubmit}>
-        {mode === 'single' && (
+      {mode === 'delete' ? (
+        <form onSubmit={handleDeleteSubmit}>
           <div className="form-group">
-            <label htmlFor="userEmail">User Email</label>
+            <label htmlFor="deleteNotificationId">Notification ID</label>
             <input
-              type="email"
-              id="userEmail"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              placeholder="Enter user email address"
+              type="text"
+              id="deleteNotificationId"
+              value={deleteNotificationId}
+              onChange={(e) => setDeleteNotificationId(e.target.value)}
+              placeholder="Enter notification ID to delete"
+              disabled={deleteLoading}
+            />
+          </div>
+          
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          
+          <button 
+            type="submit" 
+            className="delete-button"
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? 'Deleting...' : 'Delete Notification'}
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {mode === 'single' && (
+            <div className="form-group">
+              <label htmlFor="userEmail">User Email</label>
+              <input
+                type="email"
+                id="userEmail"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                placeholder="Enter user email address"
+                disabled={loading}
+              />
+            </div>
+          )}
+          
+          <div className="form-group">
+            <label htmlFor="message">Message</label>
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Enter notification message"
+              rows="4"
               disabled={loading}
             />
           </div>
-        )}
-        
-        <div className="form-group">
-          <label htmlFor="message">Message</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter notification message"
-            rows="4"
+          
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          
+          <button 
+            type="submit" 
+            className="send-button"
             disabled={loading}
-          />
-        </div>
-        
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-        
-        <button 
-          type="submit" 
-          className="send-button"
-          disabled={loading}
-        >
-          {loading ? 'Sending...' : mode === 'broadcast' ? 'Broadcast Notification' : 'Send Notification'}
-        </button>
-      </form>
+          >
+            {loading ? 'Sending...' : mode === 'broadcast' ? 'Broadcast Notification' : 'Send Notification'}
+          </button>
+        </form>
+      )}
     </div>
   );
 };
