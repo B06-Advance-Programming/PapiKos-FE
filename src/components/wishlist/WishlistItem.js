@@ -12,17 +12,19 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
       setFadeOut(true);
     }
   }, [isPendingRemoval]);
-
   const handleRemove = async () => {
+    // Immediate visual feedback - start fade out animation
+    setFadeOut(true);
+    setIsRemoving(true);
+    setError(null);
+    
     try {
-      setIsRemoving(true);
-      setError(null);
-      setFadeOut(true);
-        // Call the parent component's removal handler
+      // Call the parent component's removal handler
       // which handles the API call and optimistic UI updates
       await onRemove(item.kostID || item.kostId);
+      // If successful, component will be unmounted by parent
     } catch (error) {
-      // This will only run if the parent component doesn't catch the error
+      // Rollback visual state if removal failed
       console.error('Failed to remove item from wishlist:', error);
       setError('Failed to remove. Try again.');
       setFadeOut(false);
@@ -47,13 +49,21 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
           <span>{item.jumlahKamar || item.roomSize} kamar</span>
         </div>
         {error && <p className="item-error">{error}</p>}
-      </div>      <div className="wishlist-item-actions">
-        <button 
+      </div>      <div className="wishlist-item-actions">        <button 
           className={`remove-btn ${isRemoving || isPendingRemoval ? 'removing' : ''}`} 
           onClick={handleRemove}
           disabled={isRemoving || isPendingRemoval}
         >
-          {isRemoving || isPendingRemoval ? 'Removing...' : 'Remove from Wishlist'}
+          {isRemoving ? (
+            <>
+              <span className="button-spinner"></span>
+              Removing...
+            </>
+          ) : isPendingRemoval ? (
+            'Removing...'
+          ) : (
+            'Remove from Wishlist'
+          )}
         </button>
         
         {isPendingRemoval && !isRemoving && (

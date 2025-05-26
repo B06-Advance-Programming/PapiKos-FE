@@ -7,15 +7,16 @@ import './WishlistPage.css';
 const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   
   // Get user ID from localStorage (stored by AuthContext)
-  const userId = localStorage.getItem("userId");
-    // Fetch wishlist data
+  const userId = localStorage.getItem("userId");    // Fetch wishlist data
   const fetchWishlist = useCallback(async () => {
     if (!userId) return;
     
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     
     try {
       const data = await getWishlist(userId);
@@ -26,25 +27,56 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
     } finally {
       setLoading(false);
     }
-  }, [userId]);
-  // Handle removing items from wishlist
+  }, [userId]);// Handle removing items from wishlist with optimistic updates
   const handleRemoveFromWishlist = useCallback(async (kostId) => {
+    // Store the item being removed for potential rollback
+    const itemToRemove = wishlist.find(item => (item.kostID || item.kostId) === kostId);
+    const itemIndex = wishlist.findIndex(item => (item.kostID || item.kostId) === kostId);
+    
+    if (!itemToRemove) {
+      console.error('Item not found in wishlist');
+      return;
+    }
+
+    // Clear any existing messages
+    setError(null);
+    setSuccessMessage(null);
+
+    // Optimistic update - immediately remove from UI
+    setWishlist(prev => prev.filter(item => (item.kostID || item.kostId) !== kostId));
+    
     try {
+      // Make API call in the background
       await removeFromWishlist(userId, kostId);
       
-      // Remove item from local state
-      setWishlist(prev => prev.filter(item => (item.kostID || item.kostId) !== kostId));
+      // Show success message
+      setSuccessMessage(`${itemToRemove.nama || 'Item'} removed from wishlist`);
+      setTimeout(() => setSuccessMessage(null), 3000);
+      
     } catch (error) {
       console.error(`Failed to remove item ${kostId} from wishlist:`, error);
-      setError(`Failed to remove item from wishlist: ${error.message}`);
+      
+      // Rollback optimistic update - restore the item at its original position
+      setWishlist(prev => {
+        const newWishlist = [...prev];
+        newWishlist.splice(itemIndex, 0, itemToRemove);
+        return newWishlist;
+      });
+      
+      // Show error message
+      setError(`Failed to remove ${itemToRemove.nama || 'item'} from wishlist. ${error.message || 'Please try again.'}`);
+      
+      // Auto-dismiss error after 5 seconds
+      setTimeout(() => setError(null), 5000);
     }
-  }, [userId]);
+  }, [userId, wishlist]);
     // Load wishlist data when component mounts
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);
-
   const handleRefresh = () => {
+    setError(null);
+    setSuccessMessage(null);
     fetchWishlist();
   };
   
@@ -98,11 +130,16 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
           {loading ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
+        {successMessage && (
+        <div className="success-message">
+          <p>{successMessage}</p>
+        </div>
+      )}
       
       {error && (
         <div className="error-message">
           <p>{error}</p>
-          <button onClick={() => fetchWishlist()}>Try Again</button>
+          <button onClick={() => setError(null)}>Dismiss</button>
         </div>
       )}
       
