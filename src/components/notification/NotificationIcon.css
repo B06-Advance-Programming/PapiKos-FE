@@ -8,16 +8,26 @@
   cursor: pointer;
   margin-left: 10px;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .notification-icon:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
 
-.notification-icon i {
+.notification-icon i,
+.navbar .notification-icon i,
+.nav-item .notification-icon i {
   font-size: 1.2rem;
-  color: #555;
+  color: #ffffff !important; /* White color for dark navbar */
+  transition: color 0.3s ease;
+}
+
+.notification-icon:hover i,
+.navbar .notification-icon:hover i,
+.nav-item .notification-icon:hover i {
+  color: #08f !important; /* Blue on hover */
 }
 
 .notification-badge {

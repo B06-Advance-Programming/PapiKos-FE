@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getUserNotifications } from '../../api/notificationApi';
 import { useAuth } from '../../contexts/AuthContext';
+import { readNotificationStorage } from '../../utils/readNotificationStorage';
 import NotificationItem from './NotificationItem';
+import NotificationDetailModal from './NotificationDetailModal';
 import './NotificationPage.css';
 
 const NotificationPage = () => {
@@ -9,6 +11,8 @@ const NotificationPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAuth();
 
   // Fetch notifications
@@ -42,16 +46,37 @@ const NotificationPage = () => {
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
-
   // Handle refresh
   const handleRefresh = () => {
     fetchNotifications(true);
   };
+  // Handle notification click
+  const handleNotificationClick = (notification) => {
+    // Mark as read immediately when clicked
+    readNotificationStorage.markAsRead(notification.id);
+    // Force re-render to update UI
+    setNotifications(prev => [...prev]);
+    
+    setSelectedNotification(notification);
+    setIsModalOpen(true);
+  };
+  // Handle modal close
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedNotification(null);
+  };
+
+  // Mark all visible notifications as read when page loads
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const notificationIds = notifications.map(n => n.id);
+      readNotificationStorage.markMultipleAsRead(notificationIds);
+    }
+  }, [notifications]);
 
   return (
-    <div className="notification-page">
-      <div className="notification-page-header">
-        <h1>Your Notifications</h1>
+    <div className="notification-page">      <div className="notification-page-header">
+        <h1>Notifikasi Anda</h1>
         <button 
           className="refresh-button" 
           onClick={handleRefresh}
@@ -61,33 +86,38 @@ const NotificationPage = () => {
         </button>
       </div>
 
-      <div className="notification-page-content">
-        {loading && !isRefreshing ? (
+      <div className="notification-page-content">        {loading && !isRefreshing ? (
           <div className="notification-page-loading">
             <div className="spinner"></div>
-            <p>Loading notifications...</p>
+            <p>Memuat notifikasi...</p>
           </div>
         ) : error ? (
           <div className="notification-page-error">
             <p>{error}</p>
-            <button onClick={handleRefresh}>Try Again</button>
+            <button onClick={handleRefresh}>Coba Lagi</button>
           </div>
         ) : notifications.length === 0 ? (
           <div className="notification-page-empty">
             <i className="fas fa-bell-slash"></i>
-            <p>You don't have any notifications yet</p>
-          </div>
-        ) : (
+            <p>Anda belum memiliki notifikasi</p>
+          </div>) : (
           <div className="notification-list-container">
             {notifications.map(notification => (
               <NotificationItem 
                 key={notification.id} 
                 notification={notification} 
+                onClick={handleNotificationClick}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Notification Detail Modal */}      <NotificationDetailModal
+        notification={selectedNotification}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+      />
     </div>
   );
 };

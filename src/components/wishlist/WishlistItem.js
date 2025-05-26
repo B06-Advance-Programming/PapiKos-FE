@@ -23,10 +23,9 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
       // which handles the API call and optimistic UI updates
       await onRemove(item.kostID || item.kostId);
       // If successful, component will be unmounted by parent
-    } catch (error) {
-      // Rollback visual state if removal failed
+    } catch (error) {      // Rollback visual state if removal failed
       console.error('Failed to remove item from wishlist:', error);
-      setError('Failed to remove. Try again.');
+      setError('Gagal menghapus. Coba lagi.');
       setFadeOut(false);
       
       // Auto-dismiss error after 3 seconds
@@ -52,17 +51,16 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
       </div>      <div className="wishlist-item-actions">        <button 
           className={`remove-btn ${isRemoving || isPendingRemoval ? 'removing' : ''}`} 
           onClick={handleRemove}
-          disabled={isRemoving || isPendingRemoval}
-        >
+          disabled={isRemoving || isPendingRemoval}        >
           {isRemoving ? (
             <>
               <span className="button-spinner"></span>
-              Removing...
+              Menghapus...
             </>
           ) : isPendingRemoval ? (
-            'Removing...'
+            'Menghapus...'
           ) : (
-            'Remove from Wishlist'
+            'Hapus dari Wishlist'
           )}
         </button>
         

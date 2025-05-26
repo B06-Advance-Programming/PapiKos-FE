@@ -10,8 +10,7 @@ const notificationCache = new ApiCache(60000); // 1 minute cache for notificatio
 // Get all notifications for a user
 export const getUserNotifications = async (userId, options = {}) => {
   const cacheKey = `notifications_${userId}`;
-  
-  // Check cache first if not forced to bypass
+    // Check cache first if not forced to bypass
   if (!options.bypassCache) {
     const cachedData = notificationCache.get(cacheKey);
     if (cachedData) {
@@ -21,7 +20,7 @@ export const getUserNotifications = async (userId, options = {}) => {
   }
   
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -73,9 +72,8 @@ export const getNotificationCount = async (userId, options = {}) => {
       return cachedData;
     }
   }
-  
-  try {
-    const token = localStorage.getItem('token');
+    try {
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -130,7 +128,7 @@ export const getNotificationById = async (notificationId, options = {}) => {
   }
   
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -174,7 +172,7 @@ export const getNotificationById = async (notificationId, options = {}) => {
 // Create a notification for a specific user (admin only)
 export const createNotification = async (userId, message, options = {}) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -219,7 +217,7 @@ export const createNotification = async (userId, message, options = {}) => {
 // Broadcast a notification to all users (admin only)
 export const broadcastNotification = async (message, options = {}) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }
@@ -264,7 +262,7 @@ export const broadcastNotification = async (message, options = {}) => {
 // Delete a notification (admin only)
 export const deleteNotification = async (notificationId, options = {}) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwtToken');
     if (!token) {
       throw new Error('Authentication required');
     }

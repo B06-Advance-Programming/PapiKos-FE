@@ -31,9 +31,8 @@ const KostCard = ({ kost, initialWishlistStatus = null }) => {
   
   const handleWishlistToggle = async (e) => {
     e.stopPropagation(); // Prevent event bubbling
-    
-    if (!isPenyewa || !userId) {
-      alert('Please log in as a penyewa to add items to wishlist');
+      if (!isPenyewa || !userId) {
+      alert('Silakan masuk sebagai penyewa untuk menambahkan item ke wishlist');
       return;
     }
     
@@ -43,19 +42,18 @@ const KostCard = ({ kost, initialWishlistStatus = null }) => {
     const previousState = inWishlist;
     setInWishlist(!inWishlist);
     setWishlistLoading(true);
-    
-    try {
+      try {
       if (previousState) {
         await removeFromWishlist(userId, kost.kostID);
       } else {
         await addToWishlist(userId, kost.kostID);
       }
       // If successful, the optimistic update was correct
-    } catch (error) {
-      console.error('Error updating wishlist:', error);
+    } catch (err) {
+      console.error('Error updating wishlist:', err);
       // Revert optimistic update on error
       setInWishlist(previousState);
-      alert('Failed to update wishlist. Please try again.');
+      alert('Gagal memperbarui wishlist. Silakan coba lagi.');
     } finally {
       setWishlistLoading(false);
     }
@@ -71,7 +69,7 @@ const KostCard = ({ kost, initialWishlistStatus = null }) => {
                 className={`wishlist-button ${inWishlist ? 'in-wishlist' : ''}`}
                 onClick={handleWishlistToggle}
                 disabled={wishlistLoading}
-                title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                title={inWishlist ? 'Hapus dari wishlist' : 'Tambah ke wishlist'}
               >
                 <svg className="heart-icon" viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

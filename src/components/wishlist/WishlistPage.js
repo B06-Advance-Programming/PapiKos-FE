@@ -20,10 +20,9 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
     
     try {
       const data = await getWishlist(userId);
-      setWishlist(data);
-    } catch (err) {
+      setWishlist(data);    } catch (err) {
       console.error('Error fetching wishlist:', err);
-      setError('Failed to load wishlist. Please try again later.');
+      setError('Gagal memuat wishlist. Silakan coba lagi nanti.');
     } finally {
       setLoading(false);
     }
@@ -48,9 +47,8 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
     try {
       // Make API call in the background
       await removeFromWishlist(userId, kostId);
-      
-      // Show success message
-      setSuccessMessage(`${itemToRemove.nama || 'Item'} removed from wishlist`);
+        // Show success message
+      setSuccessMessage(`${itemToRemove.nama || 'Item'} dihapus dari wishlist`);
       setTimeout(() => setSuccessMessage(null), 3000);
       
     } catch (error) {
@@ -62,9 +60,8 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
         newWishlist.splice(itemIndex, 0, itemToRemove);
         return newWishlist;
       });
-      
-      // Show error message
-      setError(`Failed to remove ${itemToRemove.nama || 'item'} from wishlist. ${error.message || 'Please try again.'}`);
+        // Show error message
+      setError(`Gagal menghapus ${itemToRemove.nama || 'item'} dari wishlist. ${error.message || 'Silakan coba lagi.'}`);
       
       // Auto-dismiss error after 5 seconds
       setTimeout(() => setError(null), 5000);
@@ -79,47 +76,44 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
     setSuccessMessage(null);
     fetchWishlist();
   };
-  
-  // If no userId, user is not authenticated
+    // If no userId, user is not authenticated
   if (!userId) {
     return (
       <div className="wishlist-page">
         <div className="container">
-          <h1>My Wishlist</h1>
+          <h1>Wishlist Saya</h1>
           <div className="error-message">
-            <p>Please log in to view your wishlist.</p>
-            <Link to="/login" className="login-link">Go to Login</Link>
+            <p>Silakan masuk untuk melihat wishlist Anda.</p>
+            <Link to="/login" className="login-link">Masuk</Link>
           </div>
         </div>
       </div>
     );
   }
-  
-  // Render empty state when wishlist is empty
+    // Render empty state when wishlist is empty
   const renderEmptyState = () => (
     <div className="wishlist-empty">
-      <h3>Your wishlist is empty</h3>
-      <p>Start adding boarding houses to your wishlist!</p>
-      <Link to="/" className="btn-primary">Explore Kosts</Link>
+      <h3>Wishlist Anda kosong</h3>
+      <p>Mulai menambahkan kost ke wishlist Anda!</p>
+      <Link to="/" className="btn-primary">Jelajahi Kost</Link>
     </div>
   );
-    // Loading state
+  // Loading state
   if (loading) {
     return (
       <div className="wishlist-container">
-        <h2>My Wishlist</h2>
+        <h2>Wishlist Saya</h2>
         <div className="wishlist-loading">
           <div className="loading-spinner"></div>
-          <p>Loading your wishlist...</p>
+          <p>Memuat wishlist Anda...</p>
         </div>
       </div>
     );
   }
   
-  return (
-    <div className="wishlist-container">      <div className="wishlist-header">
-        <h2>My Wishlist</h2>
-        <button 
+  return (    <div className="wishlist-container">      <div className="wishlist-header">
+        <h2>Wishlist Saya</h2>
+        <button
           className="refresh-button"
           onClick={handleRefresh}
           disabled={loading}
@@ -135,11 +129,10 @@ const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
           <p>{successMessage}</p>
         </div>
       )}
-      
-      {error && (
+        {error && (
         <div className="error-message">
           <p>{error}</p>
-          <button onClick={() => setError(null)}>Dismiss</button>
+          <button onClick={() => setError(null)}>Tutup</button>
         </div>
       )}
       
