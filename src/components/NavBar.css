@@ -118,6 +118,50 @@
   border-color: #a00;
 }
 
+/* Notification icon integration with navbar */
+.nav-item.notification-nav-item {
+  display: flex;
+  align-items: center;
+  margin: 0 8px;
+}
+
+.nav-item.notification-nav-item .notification-icon {
+  margin: 0;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-item.notification-nav-item .notification-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-item.notification-nav-item .notification-icon i {
+  color: #eee;
+  font-size: 1.1rem;
+}
+
+.nav-item.notification-nav-item .notification-icon:hover i {
+  color: #08f;
+}
+
+.nav-item.notification-nav-item .notification-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* Responsive tweaks */
 @media (max-width: 640px) {
   .navbar-container {

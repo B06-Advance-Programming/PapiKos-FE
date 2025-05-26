@@ -9,6 +9,7 @@ import KuponDetail from './modules/kupon/kuponDetail';
 import KuponForm from './modules/kupon/KuponForm';
 import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
+import NotificationPage from './components/notification/NotificationPage';
 import NavBar from './components/NavBar';
 import PenyewaSearchPage from './components/penyewaan/PenyewaSearchPage';
 import PenyewaBookingsPage from './components/penyewaan/PenyewaBookingsPage';
@@ -86,9 +87,7 @@ function App() {
                   <KuponForm />
                 </RequireRole>
               }
-            />
-
-            {/* Wishlist protected for PENYEWA */}
+            />            {/* Wishlist protected for PENYEWA */}
             <Route
               path="/wishlist"
               element={
@@ -98,9 +97,25 @@ function App() {
               }
             />
 
-            {/* Dashboards */}
+            {/* Notifications protected for PENYEWA and PEMILIK */}
+            <Route
+              path="/notifications"
+              element={
+                <RequireRole allowedRoles={['PENYEWA', 'PEMILIK']}>
+                  <NotificationPage />
+                </RequireRole>
+              }
+            />            {/* Dashboards */}
             <Route
               path="/admin/dashboard"
+              element={
+                <RequireRole allowedRoles={['ADMIN']}>
+                  <AdminDashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/notifications"
               element={
                 <RequireRole allowedRoles={['ADMIN']}>
                   <AdminDashboard />

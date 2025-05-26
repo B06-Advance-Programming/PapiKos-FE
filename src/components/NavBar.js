@@ -1,15 +1,22 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext'; // adjust path
+import NotificationIcon from './notification/NotificationIcon';
 import './NavBar.css';
 
 const NavBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, roles, logout } = useAuth();
 
   const isPemilik = roles.includes('PEMILIK');
   const isPenyewa = roles.includes('PENYEWA');
   const isAdmin = roles.includes('ADMIN');
+
+  // Handle notification click
+  const handleNotificationClick = () => {
+    navigate('/notifications');
+  };
 
   // Payment path per role
   let paymentLink = null;
@@ -69,9 +76,7 @@ const NavBar = () => {
                 Payment
               </Link>
             </li>
-          )}
-
-          {/* Logged in as Penyewa: show Wishlist + Logout */}
+          )}          {/* Logged in as Penyewa: show Wishlist + Notifications + Logout */}
           {isPenyewa && (
             <>
               <li className="nav-item">
@@ -89,13 +94,14 @@ const NavBar = () => {
               <li className="nav-item">
                 <Link to="/kupon" className="nav-link">Kupon</Link>
               </li>
+              <li className="nav-item notification-nav-item">
+                <NotificationIcon onClick={handleNotificationClick} />
+              </li>
               <li className="nav-item">
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
               </li>
             </>
-          )}
-
-          {/* Logged in as Pemilik: just show Logout */}
+          )}          {/* Logged in as Pemilik: show Notifications + Logout */}
           {isPemilik && !isPenyewa && (
             <>
               <li className="nav-item">
@@ -106,18 +112,21 @@ const NavBar = () => {
                   Bookings
                 </Link>
               </li>
+              <li className="nav-item notification-nav-item">
+                <NotificationIcon onClick={handleNotificationClick} />
+              </li>
               <li className="nav-item">
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>
               </li>
             </>
-          )}
-
-
-          {/* Logged in as Admin: just show Logout */}
+          )}          {/* Logged in as Admin: just show Logout */}
           {isAdmin && !isPenyewa && !isPemilik && (
             <>
               <li className="nav-item">
                 <Link to="/kupon" className="nav-link">Kupon</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/admin/notifications" className="nav-link">Notifications</Link>
               </li>
               <li className="nav-item">
                 <button className="nav-link logout-btn" onClick={logout}>Logout</button>

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { broadcastNotification, createNotification } from '../../api/notificationApi';
+import { getUserIdByEmail } from '../../api/userApi';
 import './AdminNotificationPanel.css';
 
 const AdminNotificationPanel = () => {
   const [message, setMessage] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [mode, setMode] = useState('broadcast'); // 'broadcast' or 'single'
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -18,8 +18,8 @@ const AdminNotificationPanel = () => {
       return;
     }
     
-    if (mode === 'single' && !userId.trim()) {
-      setError('Please enter a user ID');
+    if (mode === 'single' && !userEmail.trim()) {
+      setError('Please enter a user email');
       return;
     }
     
@@ -32,14 +32,16 @@ const AdminNotificationPanel = () => {
         const result = await broadcastNotification(message);
         setSuccess(`Notification broadcast to ${result.recipientCount} users`);
       } else {
+        // Convert email to user ID before sending notification
+        const userId = await getUserIdByEmail(userEmail);
         await createNotification(userId, message);
-        setSuccess('Notification sent to user successfully');
+        setSuccess(`Notification sent to ${userEmail} successfully`);
       }
       
       // Clear form after success
       setMessage('');
       if (mode === 'single') {
-        setUserId('');
+        setUserEmail('');
       }
     } catch (err) {
       console.error('Notification error:', err);
@@ -71,13 +73,13 @@ const AdminNotificationPanel = () => {
       <form onSubmit={handleSubmit}>
         {mode === 'single' && (
           <div className="form-group">
-            <label htmlFor="userId">User ID</label>
+            <label htmlFor="userEmail">User Email</label>
             <input
-              type="text"
-              id="userId"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="Enter user ID"
+              type="email"
+              id="userEmail"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              placeholder="Enter user email address"
               disabled={loading}
             />
           </div>
