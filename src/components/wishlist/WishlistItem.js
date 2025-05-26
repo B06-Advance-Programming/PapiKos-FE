@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './WishlistItem.css';
 
 const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
@@ -19,10 +18,9 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
       setIsRemoving(true);
       setError(null);
       setFadeOut(true);
-      
-      // Call the parent component's removal handler
+        // Call the parent component's removal handler
       // which handles the API call and optimistic UI updates
-      await onRemove(item.kostId);
+      await onRemove(item.kostID || item.kostId);
     } catch (error) {
       // This will only run if the parent component doesn't catch the error
       console.error('Failed to remove item from wishlist:', error);
@@ -36,23 +34,20 @@ const WishlistItem = ({ item, userId, onRemove, isPendingRemoval = false }) => {
     }
   };
   return (
-    <div className={`wishlist-item ${fadeOut ? 'fade-out' : ''} ${isPendingRemoval ? 'pending-removal' : ''}`}>
-      <div className="wishlist-item-image">
-        <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.name} />
+    <div className={`wishlist-item ${fadeOut ? 'fade-out' : ''} ${isPendingRemoval ? 'pending-removal' : ''}`}>      <div className="wishlist-item-image">
+        <img src={item.imageUrl || 'https://via.placeholder.com/150'} alt={item.nama || item.name} />
       </div>
       <div className="wishlist-item-content">
-        <h3>{item.name}</h3>
-        <p className="location">{item.location}</p>
-        <p className="price">Rp {item.price.toLocaleString('id-ID')} / bulan</p>
+        <h3>{item.nama || item.name}</h3>
+        <p className="location">{item.alamat || item.location}</p>
+        <p className="price">Rp {(item.hargaPerBulan || item.price)?.toLocaleString('id-ID')} / bulan</p>
         <div className="details">
-          <span>{item.roomType}</span>
+          <span>{item.roomType || 'Kost'}</span>
           <span>•</span>
-          <span>{item.roomSize} m²</span>
+          <span>{item.jumlahKamar || item.roomSize} kamar</span>
         </div>
         {error && <p className="item-error">{error}</p>}
-      </div>
-      <div className="wishlist-item-actions">
-        <Link to={`/kost/${item.kostId}`} className="view-btn">View Details</Link>
+      </div>      <div className="wishlist-item-actions">
         <button 
           className={`remove-btn ${isRemoving || isPendingRemoval ? 'removing' : ''}`} 
           onClick={handleRemove}

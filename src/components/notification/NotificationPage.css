@@ -1,0 +1,124 @@
+.notification-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.notification-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-page-header h1 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.refresh-button {
+  background-color: #ff5a5f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.refresh-button:hover {
+  background-color: #ff4146;
+}
+
+.refresh-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.notification-page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #ff5a5f;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.notification-page-error {
+  background-color: #ffeeee;
+  border: 1px solid #ffcfcf;
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+  color: #e74c3c;
+}
+
+.notification-page-error button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.notification-page-error button:hover {
+  background-color: #c0392b;
+}
+
+.notification-page-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: #888;
+}
+
+.notification-page-empty i {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.notification-list-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* For smaller screens */
+@media (max-width: 600px) {
+  .notification-page {
+    padding: 15px;
+  }
+  
+  .notification-page-header h1 {
+    font-size: 20px;
+  }
+  
+  .refresh-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

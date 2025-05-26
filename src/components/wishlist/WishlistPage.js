@@ -1,176 +1,67 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getWishlist, removeFromWishlist} from '../../api/wishlistApi';
-import { createCancellableRequest } from '../../api/apiUtils';
 import WishlistItem from './WishlistItem';
 import './WishlistPage.css';
 
-const WishlistPage = () => {
-  const [wishlist, setWishlist] = useState([]);
+const WishlistPage = () => {  const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pendingOperations, setPendingOperations] = useState({});
   
-  // This should come from your authentication context in a real app
-  // For now, we'll hardcode a user ID for testing
-  const userId = "1"; // Replace with actual user ID from auth context
-  
-  // Use a ref to track if the component is mounted
-  const isMounted = useRef(true);
-  
-  // Ref to store cancellation functions
-  const cancelFunctions = useRef({});
-  
-  // Maximum number of retries before giving up
-  const MAX_RETRIES = 3;
-  
-  // Fetch wishlist data with retry logic and cancellation support
-  const fetchWishlist = useCallback(async (isRefresh = false) => {
-    // If refreshing, update state to show refresh indicator
-    if (isRefresh) {
-      setIsRefreshing(true);
-    } else {
-      setLoading(true);
-    }
+  // Get user ID from localStorage (stored by AuthContext)
+  const userId = localStorage.getItem("userId");
+    // Fetch wishlist data
+  const fetchWishlist = useCallback(async () => {
+    if (!userId) return;
     
-    // Create cancellable request
-    const requestId = `fetch-wishlist-${Date.now()}`;
-    const { signal, cancel } = createCancellableRequest();
-    
-    // Store cancel function to allow cancellation from elsewhere
-    cancelFunctions.current[requestId] = cancel;
+    setLoading(true);
+    setError(null);
     
     try {
-      const data = await getWishlist(userId, {
-        requestId,
-        cancellable: true,
-        signal,
-        maxRetries: MAX_RETRIES,
-        bypassCache: isRefresh // Bypass cache when explicitly refreshing
-      });
-      
-      // Only update state if component is still mounted
-      if (isMounted.current) {
-        setWishlist(data);
-        setError(null);
-        setRetryCount(0); // Reset retry count on success
-      }
+      const data = await getWishlist(userId);
+      setWishlist(data);
     } catch (err) {
       console.error('Error fetching wishlist:', err);
-      
-      // Only update state if component is still mounted
-      if (isMounted.current) {
-        // Don't increment retry count or show error if request was canceled
-        if (err.name === 'AbortError') {
-          console.log('Wishlist fetch was cancelled');
-          return;
-        }
-        
-        // If we haven't reached max retries, try again
-        if (retryCount < MAX_RETRIES) {
-          setRetryCount(prev => prev + 1);
-          setError(`Failed to load wishlist. Retrying... (${retryCount + 1}/${MAX_RETRIES})`);
-          
-          // Add exponential backoff
-          const backoffDelay = Math.pow(2, retryCount) * 1000;
-          setTimeout(() => {
-            if (isMounted.current) {
-              fetchWishlist(isRefresh);
-            }
-          }, backoffDelay);
-        } else {
-          setError('Failed to load wishlist. Please try again later.');
-        }
-      }
+      setError('Failed to load wishlist. Please try again later.');
     } finally {
-      // Cleanup the cancel function
-      delete cancelFunctions.current[requestId];
-      
-      // Update loading states if component is still mounted
-      if (isMounted.current) {
-        setLoading(false);
-        if (isRefresh) {
-          setIsRefreshing(false);
-        }
-      }
+      setLoading(false);
     }
-  }, [userId, retryCount]);
-  
-  // Handle removing items from wishlist with optimistic UI updates
-  const handleRemoveFromWishlist = useCallback(async (itemId, kostId) => {
-    // Generate operation ID for tracking this specific remove operation
-    const operationId = `remove-${itemId}-${Date.now()}`;
-    
-    // Optimistically update UI by removing the item
-    const updatedWishlist = wishlist.filter(item => item.id !== itemId);
-    setWishlist(updatedWishlist);
-    
-    // Track pending operation
-    setPendingOperations(prev => ({
-      ...prev,
-      [operationId]: { type: 'remove', itemId, kostId }
-    }));
-    
+  }, [userId]);
+  // Handle removing items from wishlist
+  const handleRemoveFromWishlist = useCallback(async (kostId) => {
     try {
-      // Create cancellable request
-      const { signal, cancel } = createCancellableRequest();
-      cancelFunctions.current[operationId] = cancel;
+      await removeFromWishlist(userId, kostId);
       
-      // Actually remove from server
-      await removeFromWishlist(userId, kostId, {
-        requestId: operationId,
-        signal,
-        maxRetries: 2
-      });
-      
-      // Operation succeeded
-      console.log(`Successfully removed item ${itemId} from wishlist`);
+      // Remove item from local state
+      setWishlist(prev => prev.filter(item => (item.kostID || item.kostId) !== kostId));
     } catch (error) {
-      console.error(`Failed to remove item ${itemId} from wishlist:`, error);
-      
-      // If not canceled, revert the optimistic update
-      if (error.name !== 'AbortError' && isMounted.current) {
-        setError(`Failed to remove item from wishlist: ${error.message}`);
-        
-        // Fetch fresh wishlist data to ensure UI is consistent with server
-        fetchWishlist();
-      }
-    } finally {
-      // Cleanup regardless of outcome
-      delete cancelFunctions.current[operationId];
-      
-      if (isMounted.current) {
-        setPendingOperations(prev => {
-          const updated = { ...prev };
-          delete updated[operationId];
-          return updated;
-        });
-      }
+      console.error(`Failed to remove item ${kostId} from wishlist:`, error);
+      setError(`Failed to remove item from wishlist: ${error.message}`);
     }
-  }, [wishlist, userId, fetchWishlist]);
-  
-  // Load wishlist data when component mounts
+  }, [userId]);
+    // Load wishlist data when component mounts
   useEffect(() => {
     fetchWishlist();
-
-    // ⬇ snapshot ref ke variabel lokal
-    const cancelSnapshot = cancelFunctions.current;
-
-    return () => {
-      isMounted.current = false;
-
-      // Gunakan snapshot yang tidak berubah
-      Object.values(cancelSnapshot).forEach(cancel => {
-        if (typeof cancel === 'function') cancel();
-      });
-    };
   }, [fetchWishlist]);
 
   const handleRefresh = () => {
-    fetchWishlist(true);
+    fetchWishlist();
   };
+  
+  // If no userId, user is not authenticated
+  if (!userId) {
+    return (
+      <div className="wishlist-page">
+        <div className="container">
+          <h1>My Wishlist</h1>
+          <div className="error-message">
+            <p>Please log in to view your wishlist.</p>
+            <Link to="/login" className="login-link">Go to Login</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   // Render empty state when wishlist is empty
   const renderEmptyState = () => (
@@ -180,9 +71,8 @@ const WishlistPage = () => {
       <Link to="/" className="btn-primary">Explore Kosts</Link>
     </div>
   );
-  
-  // Loading state
-  if (loading && !isRefreshing) {
+    // Loading state
+  if (loading) {
     return (
       <div className="wishlist-container">
         <h2>My Wishlist</h2>
@@ -195,15 +85,17 @@ const WishlistPage = () => {
   }
   
   return (
-    <div className="wishlist-container">
-      <div className="wishlist-header">
+    <div className="wishlist-container">      <div className="wishlist-header">
         <h2>My Wishlist</h2>
         <button 
-          className={`refresh-button ${isRefreshing ? 'refreshing' : ''}`}
+          className="refresh-button"
           onClick={handleRefresh}
-          disabled={isRefreshing}
+          disabled={loading}
         >
-          {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          <svg className="refresh-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m-4.991 0v-4.991" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {loading ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
       
@@ -216,16 +108,12 @@ const WishlistPage = () => {
       
       {!loading && wishlist.length === 0 && !error ? (
         renderEmptyState()
-      ) : (
-        <div className="wishlist-items">
+      ) : (        <div className="wishlist-items">
           {wishlist.map(item => (
             <WishlistItem
-              key={item.id}
+              key={item.kostID || item.kostId || item.id}
               item={item}
-              onRemove={() => handleRemoveFromWishlist(item.id, item.kostId)}
-              isPendingRemoval={Object.values(pendingOperations).some(
-                op => op.type === 'remove' && op.itemId === item.id
-              )}
+              onRemove={handleRemoveFromWishlist}
             />
           ))}
         </div>
