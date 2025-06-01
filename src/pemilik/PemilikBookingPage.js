@@ -39,7 +39,7 @@ const PemilikBookingPage = () => {
           {bookings.map(b => (
             <div className="kost-card" key={b.id}>
               <h4>{b.namaLengkap}</h4>
-              <p><strong>Kost ID:</strong> {b.kostId}</p>
+              <p><strong>Kost Name:</strong> {b.namaKos}</p>
               <p><strong>Check-in:</strong> {b.tanggalCheckIn}</p>
               <p><strong>Duration:</strong> {b.durasiBulan} months</p>
               <p><strong>Status:</strong> {b.status}</p>
