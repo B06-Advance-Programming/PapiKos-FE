@@ -11,7 +11,6 @@ import NotFound from './modules/NotFound';
 import WishlistPage from './components/wishlist/WishlistPage';
 import NotificationPage from './components/notification/NotificationPage';
 import NavBar from './components/NavBar';
-import PenyewaSearchPage from './components/penyewaan/PenyewaSearchPage';
 import PenyewaBookingsPage from './components/penyewaan/PenyewaBookingsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
@@ -127,15 +126,6 @@ function App() {
               element={
                 <RequireRole allowedRoles={['PENYEWA']}>
                   <PenyewaDashboard />
-                </RequireRole>
-              }
-            />
-
-            <Route
-              path="/penyewa/search"
-              element={
-                <RequireRole allowedRoles={['PENYEWA']}>
-                  <PenyewaSearchPage />
                 </RequireRole>
               }
             />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import './RequireRole.css';
 
 const roleToDashboard = {
   ADMIN: '/admin/dashboard',
@@ -11,7 +12,16 @@ const roleToDashboard = {
 const RequireRole = ({ allowedRoles, children }) => {
   const { user, roles, isLoading } = useAuth();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) {
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'
+    }}>
+      <div className="spinner" />
+    </div>
+  );
+}
+
 
   if (!user) {
     // Not logged in
