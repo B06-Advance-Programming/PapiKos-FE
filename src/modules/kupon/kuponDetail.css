@@ -19,6 +19,44 @@
   margin-top: 20px;
 }
 
+.detailCard-invalid {
+  background-color: #2c2c2c;
+  border: 3px dashed #ff6f61;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 6px 15px rgba(255, 111, 97, 0.3);
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.infoSection-invalid {
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #444;
+  border-left: 5px solid #ff6f61;
+  border-radius: 8px;
+  color: #ffd1ce;
+}
+
+.infoSection-invalid .label {
+  color: #ffa39e;
+}
+
+.infoSection-invalid .value {
+  color: #000000;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  background-color: #ff6f61;
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 111, 97, 0.6);
+}
+
 .title {
   color: #e74c3c;
   text-align: center;
@@ -45,15 +83,6 @@
   margin: 5px 0 15px 0;
 }
 
-.statusBadge {
-  display: inline-block;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-weight: bold;
-  background-color: #ff6f61;
-  color: white;
-}
-
 .backButton {
   display: inline-block;
   margin-top: 20px;
@@ -69,4 +98,26 @@
 
 .backButton:hover {
   background-color: #e74c3c;
+}
+
+
+.simple-skeleton-card-content {
+  width: 100%;
+}
+
+.simple-skeleton-block {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }

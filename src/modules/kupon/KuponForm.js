@@ -3,73 +3,69 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createKupon, updateKupon, getKuponById, getKostByOwner, getAllKost } from '../../api/kuponApi';
 import './kuponForm.css';
 import { useAuth } from '../../contexts/AuthContext';
+import SimpleErrorPopup from './ErrorPopup';
 
 const KuponForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-  const { roles,user } = useAuth();
+  const { roles, user } = useAuth();
 
   const isAdmin = roles.includes("ADMIN");
   const isPemilik = roles.includes("PEMILIK");
-  
+
   const [formData, setFormData] = useState({
     namaKupon: '',
     persentase: '',
     masaBerlaku: '',
     deskripsi: '',
     quantity: '',
-    kosPemilik: [''] // Initialize with one empty string
+    kosPemilik: ['']
   });
 
-  const [kostOptions, setKostOptions] = useState([]); // Store kost options
+  const [kostOptions, setKostOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [kostLoading, setKostLoading] = useState(true);
 
-  // Fetch kost options when component mounts
- useEffect(() => {
-  const fetchKostOptions = async () => {
-    if (!user?.id) return;
-    
-    try {
-      setKostLoading(true);
-      
-      let kostData;
-      
-      if (isAdmin) {
-        // If user is ADMIN, fetch all kost data
-        kostData = await getAllKost();
-      } else if (isPemilik) {
-        // If user is PEMILIK, fetch only their kost
-        kostData = await getKostByOwner(user.id);
-      } else {
-        // For other roles, set empty array
-        kostData = [];
-      }
-      
-      setKostOptions(kostData || []);
-      console.log('Kost options loaded:', kostData);
-    } catch (err) {
-      console.error('Error fetching kost options:', err);
-      setError('Gagal memuat data kost');
-    } finally {
-      setKostLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchKostOptions = async () => {
+      if (!user?.id) return;
 
-  fetchKostOptions();
-}, [user, isAdmin, isPemilik]);
+      try {
+        setKostLoading(true);
+
+        let kostData;
+
+        if (isAdmin) {
+          kostData = await getAllKost();
+        } else if (isPemilik) {
+          kostData = await getKostByOwner(user.id);
+        } else {
+          kostData = [];
+        }
+
+        setKostOptions(kostData || []);
+        console.log('Kost options loaded:', kostData);
+      } catch (err) {
+        console.error('Error fetching kost options:', err);
+        setErrorMessage('Gagal memuat data kost');
+      } finally {
+        setKostLoading(false);
+      }
+    };
+
+    fetchKostOptions();
+  }, [user, isAdmin, isPemilik]);
 
   useEffect(() => {
     if (isEditing) {
       setLoading(true);
       getKuponById(id)
         .then(kupon => {
-          // Ensure kosPemilik is always an array of strings
           let kosPemilikArray = [];
           if (Array.isArray(kupon.kosPemilik)) {
-            kosPemilikArray = kupon.kosPemilik.map(item => 
+            kosPemilikArray = kupon.kosPemilik.map(item =>
               typeof item === 'string' ? item : (item?.toString() || '')
             );
           }
@@ -89,7 +85,7 @@ const KuponForm = () => {
         })
         .catch(err => {
           console.error('Error loading kupon:', err);
-          setError('Gagal memuat data kupon');
+          setErrorMessage('Gagal memuat data kupon');
           setLoading(false);
         });
     }
@@ -101,6 +97,10 @@ const KuponForm = () => {
       ...prev,
       [name]: name === 'persentase' || name === 'quantity' ? Number(value) : value
     }));
+  };
+
+  const handleClosePopup = () => {
+    setErrorMessage(null);
   };
 
   const handleKosPemilikChange = (index, value) => {
@@ -129,7 +129,6 @@ const KuponForm = () => {
     }
   };
 
-  // Helper function to get kost name by UUID for display
   const getKostNameByUuid = (uuid) => {
     const kost = kostOptions.find(k => k.kostID === uuid || k.id === uuid);
     return kost ? kost.nama || kost.name : 'Kost tidak ditemukan';
@@ -138,21 +137,19 @@ const KuponForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setErrorMessage('');
 
-    // Filter out empty strings and prepare data
     const submitData = {
       ...formData,
       kosPemilik: formData.kosPemilik.filter(id => id && typeof id === 'string' && id.trim() !== '')
     };
 
-    // Validate that all selected kosts exist
-    const invalidKosts = submitData.kosPemilik.filter(uuid => 
+    const invalidKosts = submitData.kosPemilik.filter(uuid =>
       !kostOptions.some(kost => kost.kostID === uuid || kost.id === uuid)
     );
 
     if (invalidKosts.length > 0) {
-      setError('Beberapa kost yang dipilih tidak valid');
+      setErrorMessage('Beberapa kost yang dipilih tidak valid');
       setLoading(false);
       return;
     }
@@ -165,22 +162,53 @@ const KuponForm = () => {
       }
       navigate('/kupon');
     } catch (err) {
-      setError(err.message);
+      setErrorMessage(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || kostLoading) return <div className="loading">Memuat...</div>;
+  const SimpleSkeletonCard = ({ height = '500px', width = '650px' }) => (
+    <div
+      className="card"
+      style={{
+        width: '100%',
+        maxWidth: '100%',
+        height: 'auto',
+        maxHeight: 'none',
+        overflow: 'visible',
+        boxSizing: 'border-box'
+      }}
+    >
+      <div className="simple-skeleton-card-content">
+        <div
+          className="simple-skeleton-block"
+          style={{ height: height, width: width }}
+        ></div>
+      </div>
+    </div>
+  );
+
+  if (loading || kostLoading) {
+    return (
+      <div className="container kupon-list-page-container">
+        <SimpleErrorPopup message={errorMessage} onClose={handleClosePopup} />
+        <div>
+          <SimpleSkeletonCard />
+        </div>
+      </div>
+
+    );
+  }
 
   return (
     <div className="form-container">
       <h1 className="form-title">
         {isEditing ? 'Edit Kupon' : 'Buat Kupon Baru'}
       </h1>
-      
-      {error && <div className="error-message">{error}</div>}
-      
+
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+
       <form onSubmit={handleSubmit} className="kupon-form">
         <div className="form-group">
           <label htmlFor="namaKupon">Nama Kupon</label>
@@ -262,15 +290,15 @@ const KuponForm = () => {
                   >
                     <option value="">Pilih Kost...</option>
                     {kostOptions.map((kost) => (
-                      <option 
-                        key={kost.kostID || kost.id} 
+                      <option
+                        key={kost.kostID || kost.id}
                         value={kost.kostID || kost.id}
-                        disabled={formData.kosPemilik.includes(kost.kostID || kost.id) && 
-                                 (kost.kostID || kost.id) !== selectedUuid}
+                        disabled={formData.kosPemilik.includes(kost.kostID || kost.id) &&
+                          (kost.kostID || kost.id) !== selectedUuid}
                       >
                         {kost.nama || kost.name}
-                        {formData.kosPemilik.includes(kost.kostID || kost.id) && 
-                         (kost.kostID || kost.id) !== selectedUuid ? ' (Sudah dipilih)' : ''}
+                        {formData.kosPemilik.includes(kost.kostID || kost.id) &&
+                          (kost.kostID || kost.id) !== selectedUuid ? ' (Sudah dipilih)' : ''}
                       </option>
                     ))}
                   </select>
@@ -284,7 +312,7 @@ const KuponForm = () => {
                   </button>
                 </div>
               ))}
-              
+
               <button
                 type="button"
                 onClick={addKosPemilik}
@@ -293,7 +321,7 @@ const KuponForm = () => {
               >
                 + Tambah Kost
               </button>
-              
+
               {formData.kosPemilik.length >= kostOptions.length && (
                 <p className="info-message">
                   Semua kost sudah dipilih
@@ -324,9 +352,9 @@ const KuponForm = () => {
           <button type="button" className="cancel-button" onClick={() => navigate('/kupon')}>
             Batal
           </button>
-          <button 
-            type="submit" 
-            className="submit-button" 
+          <button
+            type="submit"
+            className="submit-button"
             disabled={loading || kostOptions.length === 0}
           >
             {isEditing ? 'Simpan Perubahan' : 'Buat Kupon'}

@@ -1,118 +1,276 @@
 .container {
-    padding: 20px 10px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fdfdfd;
-    min-height: 100vh;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-    padding: 0 20px;
-  }
-  
-  .title {
-    text-align: center;
-    font-size: 32px;
-    font-weight: bold;
-    color: #ff6f61;
-    margin: 0;
-  }
-  
-  .create-button {
-    background-color: #ff6f61;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .create-button:hover {
-    background-color: #e74c3c;
-  }
-  
-  .grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .card {
-    width: 280px;
-    background: #ffffff;
-    border: none;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background-color: #ff6f61;
-  }
-  
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
-  }
-  
-  .cardTitle {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ff6f61;
-    margin-bottom: 12px;
-  }
-  
-  .card p {
-    font-size: 14px;
-    margin: 6px 0;
-    color: #333;
-  }
-  
-  .detailButton {
-    margin-top: auto;
-    padding: 10px;
-    background-color: #ff6f61;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    text-align: center;
-    font-weight: 500;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-  
-  .detailButton:hover {
-    background-color: #e74c3c;
-  }
-  
-  .status-valid {
-    color: #27ae60;
-    font-weight: bold;
-  }
-  
-  .status-invalid {
-    color: #c0392b;
-    font-weight: bold;
-  }
-  
+  padding: 20px 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdfdfd;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 0 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #ff6f61;
+  margin: 0;
+}
+
+.create-button {
+  background-color: #ff6f61;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-button:hover {
+  background-color: #e74c3c;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.card {
+  width: 280px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: #ff6f61;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card-invalid {
+  background-color: #d3d3d3;
+  color: #333333;
+  box-shadow: none;
+  cursor: default;
+}
+
+.card-invalid .cardTitle,
+.card-invalid p {
+  color: #444;
+}
+
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff6f61;
+  margin-bottom: 12px;
+}
+
+.card p {
+  font-size: 14px;
+  margin: 6px 0;
+  color: #333;
+}
+
+.detailButton {
+  margin-top: auto;
+  padding: 7px;
+  background-color: #ff6f61;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 400;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.detailButton:hover {
+  background-color: #e74c3c;
+}
+
+.edit-button{
+  margin-top: auto;
+  padding: 7px;
+  background-color: #ff6f61;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 400;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.status-valid {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.simple-skeleton-card-content {
+  width: 100%;
+}
+
+.simple-skeleton-block {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.kupon-list-page-container {
+  padding-bottom: 40px;
+}
+
+.kupon-list-page-container .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  margin-bottom: 32px;
+}
+
+.kupon-list-page-container .header .title {
+  margin: 0;
+  text-align: center;
+}
+
+.card p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+.card h3.cardTitle {
+  margin-bottom: 16px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  width: 100%;
+}
+
+.card-actions .action-button {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 14px;
+  padding: 8px 10px;
+  margin: 0;
+}
+
+.card-actions .detailButton,
+.card-actions .edit-button {
+  margin-top: 0;
+  margin-right: 0;
+  padding: 8px 10px;
+}
+
+.card-actions .delete-button {
+  background-color: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #fccfca;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+.card-actions .delete-button:hover {
+  background-color: #f7e0e0;
+  color: #a52a22;
+  border-color: #f8c0c0;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+  text-transform: capitalize;
+  display: inline-block;
+  line-height: 1;
+}
+
+.status-badge.status-valid{
+  background-color: #27ae60;
+}
+
+.status-badge.status-invalid {
+  color: white;
+  background-color: #a52a22;
+  animation: shake 0.5s ease-in-out;
+}
+
+.card-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.5em * 2);
+}
+
+.no-kupons-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #555;
+  font-size: 18px;
+}
+
+.no-kupons-message p {
+  margin-bottom: 16px;
+}
+
+.error-retry-button {
+  background-color: #ff6f61;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+.error-retry-button:hover {
+  background-color: #e74c3c;
+}
