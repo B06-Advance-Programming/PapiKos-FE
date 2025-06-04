@@ -1,51 +1,258 @@
-.kost-select {
-  flex: 1;
-  padding: 8px 12px;
+body {
+  background-color: #fdfdfd;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.form-container {
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin: 32px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: #ff6f61;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff6f61;
+  margin-bottom: 24px;
+  margin-top: 10px;
+}
+
+.kupon-form .form-group {
+  margin-bottom: 20px;
+}
+
+.kupon-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.kupon-form input[type="text"],
+.kupon-form input[type="number"],
+.kupon-form input[type="date"],
+.kupon-form textarea,
+.kupon-form .kost-select {
+  width: 100%;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.kupon-form input[type="text"]:focus,
+.kupon-form input[type="number"]:focus,
+.kupon-form input[type="date"]:focus,
+.kupon-form textarea:focus,
+.kupon-form .kost-select:focus {
+  border-color: #ff6f61;
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.25);
+  outline: none;
+}
+
+.kupon-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  border: none;
+}
+
+.submit-button {
+  background-color: #ff6f61;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #e74c3c;
+}
+
+.submit-button:disabled {
+  background-color: #fccfca;
+  color: #fff7f6;
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 18px;
+  color: #ff6f61;
+  font-weight: 500;
+}
+
+.error-message {
+  background-color: #fff0f0;
+  color: #c0392b;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ffbaba;
   font-size: 14px;
 }
 
 .kost-input-group {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-.no-kost-message {
-  color: #666;
-  font-style: italic;
+.kost-select {
+  flex-grow: 1;
+}
+
+.kost-select option:disabled {
+  color: #aaa;
+  background-color: #f8f8f8;
+}
+
+.remove-kost-button,
+.add-kost-button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  font-size: 14px;
+  height: 45px;
+}
+
+.remove-kost-button {
+  background-color: #fff0f0;
+  color: #e74c3c;
+  border: 1px solid #fccfca;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 45px;
+}
+
+.remove-kost-button:hover {
+  background-color: #e74c3c;
+  color: white;
+  border-color: #e74c3c;
+}
+
+.remove-kost-button:disabled {
+  background-color: #f5f5f5;
+  color: #aaa;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+.add-kost-button {
+  background-color: #fff5f0;
+  color: #ff6f61;
+  border: 1px dashed #ffbdae;
+  display: block;
+  width: auto;
+  margin-top: 8px;
+}
+
+.add-kost-button:hover {
+  background-color: #ffefeb;
+  color: #e74c3c;
+  border-color: #ff9b8a;
+}
+
+.add-kost-button:disabled {
+  background-color: #f5f5f5;
+  color: #aaa;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
+.no-kost-message,
+.info-message {
+  color: #555;
+  font-size: 14px;
   padding: 12px;
   background-color: #f9f9f9;
-  border-radius: 4px;
-}
-
-.info-message {
-  color: #666;
-  font-size: 12px;
-  margin-top: 4px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #eee;
 }
 
 .selected-kosts-list {
   list-style-type: none;
   padding: 0;
-  margin: 8px 0;
+  margin-top: 12px;
 }
 
 .selected-kost-item {
-  padding: 8px 12px;
-  background-color: #e8f5e8;
-  border: 1px solid #c3e6c3;
-  border-radius: 4px;
-  margin-bottom: 4px;
+  background-color: #fff5f0;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #ffddd9;
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .uuid-display {
-  font-size: 11px;
-  color: #666;
+  font-size: 12px;
+  color: #777;
+  margin-left: 10px;
   font-family: monospace;
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
