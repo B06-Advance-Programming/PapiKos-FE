@@ -29,8 +29,13 @@ function App() {
     const { user, roles, isLoading } = useAuth();
 
     if (isLoading) {
-      // loading spinner or placeholder
-      return <div>Loading...</div>;
+      return (
+        <div style={{
+          display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'
+        }}>
+          <div className="spinner" />
+        </div>
+      );
     }
 
     if (!user) {
